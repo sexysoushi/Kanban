@@ -7,6 +7,8 @@
 *homme flux récupere aléatoirement des cartes magnétiques
 *
 *flux et produits doivent etre parametrable dans la console avant lancement de l'application 
+
+ehsgiose
 */
 
 #include <stdio.h>
