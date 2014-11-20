@@ -10,10 +10,20 @@
 #include <semaphore.h>
 #include <pthread.h>
 #include <time.h>
+#include "structures.h"
 
-int main (int argc, char* argv[])
+
+
+
+void traitantSIGINT(int s)
+{
+	exit(-1);
+}
+
+int main(int argc, char* argv[])
 {
 	
+	signal(SIGINT,traitantSIGINT);
 
 	return 0;
 }
