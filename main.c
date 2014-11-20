@@ -14,7 +14,6 @@
 
 
 
-
 void traitantSIGINT(int s)
 {
 	exit(-1);
