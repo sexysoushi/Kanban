@@ -5,11 +5,11 @@ Mettre en place méthode Kanban avec des threads et des semaphores
 
 /*
 *Commande client (semaphore)
-*qui déclanche automatiquement la production (thread)
+*qui déclenche automatiquement la production (thread)
 *conteneur (semaphore et thread ?)
-*carte magnetique (thread? c'est un compteur plus tot?)
-*boite au lettre (?)
-*homme flux récupere aléatoirement des cartes magnétiques
+*carte magnetique (thread? c'est un compteur plutôt?)
+*boite aux lettres (?)
+*homme flux récupère aléatoirement des cartes magnétiques
 *
-*flux et produits doivent etre parametrable dans la console avant lancement de l'application 
+*flux et produits doivent être paramétrable dans la console avant lancement de l'application 
 */

@@ -3,7 +3,6 @@ Kanban
 
 Mettre en place méthode Kanban avec des threads et des semaphores
 
-
 /*
 *Commande client (semaphore)
 *qui déclanche automatiquement la production (thread)
