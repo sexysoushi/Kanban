@@ -7,23 +7,22 @@
 *homme flux récupere aléatoirement des cartes magnétiques
 *
 *flux et produits doivent etre parametrable dans la console avant lancement de l'application 
-
 */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <errno.h>
 
-
 #define IFLAGS (SEMPERM | IPC_CREAT)
 #define SKEY   (key_t) IPC_PRIVATE	
 #define SEMPERM 0600
 
 /*********************************************************************/
-/*  Pour Operation P et V 					     */
+/*  Pour Operation P et V */
 
-int semid_init ;
+int semid_init ;			/* Identificateur du tableau de sémaphores */
 struct sembuf sem_oper_P ;  /* Operation P */
 struct sembuf sem_oper_V ;  /* Operation V */
 
@@ -32,9 +31,8 @@ struct sembuf sem_oper_V ;  /* Operation V */
 int initsem(key_t semkey) 
 {
 	int status = 0;		
-	//int semid_init;
 
-	union semun 
+	union sem_un 
 	{
 		int val;
 		struct semid_ds *stat;
@@ -43,7 +41,7 @@ int initsem(key_t semkey)
 
 	if ((semid_init = semget(semkey, 2, IFLAGS)) > 0) 
 	{
-		ushort array[2] = {0, 0}; //création tableua non vide
+		ushort array[2] = {0, 0}; //création tableau non vide
 		ctl_arg.array = array;
 		status = semctl(semid_init, 0, SETALL, ctl_arg);
 	}
@@ -58,19 +56,21 @@ int initsem(key_t semkey)
 }
 
  
-int P(int semnum) 
+int P(int sem_num) 
 {
 	sem_oper_P.sem_num = semnum;
-	sem_oper_P.sem_op  = -1 ;
-	sem_oper_P.sem_flg = 0 ;
+	sem_oper_P.sem_op = -1;
+	sem_oper_P.sem_flg = 0;
+	
 	return semop(semid_init, &sem_oper_P, 1);
 }
 
-int V(int semnum) 
+int V(int sem_num) 
 {
 	sem_oper_V.sem_num = semnum;
-	sem_oper_V.sem_op  = 1 ;
-	sem_oper_V.sem_flg  = 0 ;
+	sem_oper_V.sem_op = 1;
+	sem_oper_V.sem_flg = 0;
+	
 	return semop(semid_init, &sem_oper_V, 1);
 }
 
@@ -150,11 +150,19 @@ void Taxi(int i)
    	}
 }
 
-int main(int argc, char *argv[])
+void traitantSIGINT(int s)
 {
-   	int i, semid;
+	semctl(semid, 0, IPC_RMID, 0);
+	exit(-1);
+}
+
+int main(int argc, char *argv[])
+{	
+    int i, semid;
+    
+    signal(SIGINT,traitantSIGINT);	/* Masque sur le signal SIGINT */
 	
-	if ((semid = initsem(SKEY)) < 0)	/* Création d'un ensemble de sémaphore */
+	if ((semid = initsem(SKEY)) < 0)	// Création d'un ensemble de sémaphore
 		return(1);
 
    	printf("%10s%20s%20s\n\n", "TGV", "TER", "TAXI");
