@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 {	
     int i, semid;
     
-    signal(SIGINT,traitantSIGINT);	/* Masque sur le signal SIGINT */
+    signal(SIGINT,traitantSIGINT);	/* Masque sur le signal SIGINT qui permet de supprimer l'objet IPC */
 	
 	if ((semid = initsem(SKEY)) < 0)	// Création d'un ensemble de sémaphore
 		return(1);

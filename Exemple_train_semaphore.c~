@@ -14,6 +14,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <errno.h>
+#include <signal.h>
 
 #define IFLAGS (SEMPERM | IPC_CREAT)
 #define SKEY   (key_t) IPC_PRIVATE	
@@ -160,7 +161,7 @@ int main(int argc, char *argv[])
 {	
     int i, semid;
     
-    signal(SIGINT,traitantSIGINT);	/* Masque sur le signal SIGINT */
+    signal(SIGINT,traitantSIGINT);	/* Masque sur le signal SIGINT qui permet de supprimer le tableau de semaphores */
 	
 	if ((semid = initsem(SKEY)) < 0)	// Création d'un ensemble de sémaphore
 		return(1);
