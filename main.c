@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include <time.h>
 
 int main (int argc, char* argv[])
 {
