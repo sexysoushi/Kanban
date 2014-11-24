@@ -54,8 +54,17 @@ void traitantSIGINT(int s)
 
 int main(int argc, char* argv[])
 {
-	
+	//ouverture des semaphores
+	mutex = sem_open("/mutex", O_RDWR|O_CREAT, 0666, 0);
+	quantite = sem_open("/quantite", O_RDWR|O_CREAT, 0666, 0);
+	carte = sem_open("/carte", O_RDWR|O_CREAT, 0666, 0);
+
 	signal(SIGINT,traitantSIGINT);
+
+	//fermeture des semaphores
+	sem_unlink("/mutex");
+	sem_unlink("/quantite");
+	sem_unlink("/carte");
 
 	return 0;
 }
