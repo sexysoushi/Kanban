@@ -18,11 +18,29 @@
 //- quantité d'ordre
 //- carte magnetique
 
+sem_t* mutex;
+sem_t* quantite;
+sem_t* carte;
 
 //int : nb produits finis (Ressources Critiques)
+#define nbProdFinis 0
 
+
+/* Homme flux (thread) récupere aléatoirement des :*/
+void HommeFlux()
+{
+	if(!fork())
+	{
+		pintf("etiquettes recuperees :");
+		attendre(3);
+		sem_wait(mutex); //P
+
+		sem_post(mutex); //V
+	}
+}
 /* Etiquette/carte (thread) contient ordre de fabrication*/
-/* Homme flux (thread)*/
+/* Disposé dans un tableau de lancement (thread)*/
+
 /* Point de départ => stock de constituants (thread)*/
 
 //qu'en penses tu ?
