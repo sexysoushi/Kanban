@@ -24,4 +24,6 @@ typedef struct {
 	//cardList cl;
 } BAL;
 
+
+
 #endif 	/* STRUCTURES_H */

@@ -18,12 +18,12 @@
 void error(const char* msg) { perror(msg); exit(-1); }
 
 /* Function used as the mask of the signal SIGINT */
-void applicateWhenSIGINT(int s) { printf("\nProblème : code arrêt système reçu\n"); exit(-1); }
+void applicateWhenSIGINT(int s) { printf("\nProblem : signal stop\n"); exit(-1); }
  
 int main(int argc, char* argv[])
 {	
 	int nbFinishProducts;
-	pthread_t t1, t2;
+	pthread_t t1, t2,t;
 	pStep st_Step;
 	
 	signal(SIGINT,applicateWhenSIGINT);

@@ -13,3 +13,9 @@ Mettre en place méthode Kanban avec des threads et des semaphores
 *
 *flux et produits doivent être paramétrable dans la console avant lancement de l'application 
 */
+
+
+
+
+Un tableau de lancement général ou bien un tableau par poste de travail ???!
+
