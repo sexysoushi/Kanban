@@ -1,9 +1,9 @@
-#include<Workshop.h>
+#include "Workshop.h"
 
 
 void* Workshop_thread_fct(void* arg)
 {
-	bool needProduct = false;
+	/*bool needProduct = false;
 
 	//Cas du produit finit
 	if(arg == FinishProduct)
@@ -54,6 +54,6 @@ void* Workshop_thread_fct(void* arg)
 			needProduct = false;
 			}
 		}
-	}
+	}*/
 //voilà et pour le retour on regardera ensemble, déjà regarde ça et dis moi si c'est à peut près ça ?
 }

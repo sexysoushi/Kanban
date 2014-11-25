@@ -9,43 +9,48 @@
 #include <signal.h>
 #include <string.h>
 #include <semaphore.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include <unistd.h>
 #include "Workshop.h"
 #include "List.h"
 
 #define NB_SEM 99
-sem_t semTab[NB_SEM];
+
+/* Global variables */
+sem_t *semTab[NB_SEM];
 
 /* Function used to post the error messages */
 void error(const char* msg) { perror(msg); exit(-1); }
 
 /* Function used as the mask of the signal SIGINT */
-void applicateWhenSIGINT(int s) { printf("\nProblem : signal stop\n"); exit(-1); }
+void applicateWhenSIGINT(int s) { printf("\nProblem : received stop signal !\n"); exit(-1); }
  
 int main(int argc, char* argv[])
 {	
 	int nbProduitDemande, i;
 	pthread_t t1, t2,t3;
-	char nb[50];	
+	char nb[10];	
 	char *semName, *txt;
-
-	/* Noms semaphores*/
-	sprintf(txt, "sem");
-	sprintf(nb, "%d", i);
-	semName = strcat(txt, nb);
-	
-	signal(SIGINT,applicateWhenSIGINT);
 	
 	/* Allocations */
 	txt = (char*) malloc(50*sizeof(char));
 	
-	/* Initialisation : semaphores, conditions, mutex, available pieces 
+	/* Initialization : semaphores, conditions, mutex, available pieces */
 	for(i = 0; i<NB_SEM; i++)
 	{
-		semTab[i] = sem_open(semName, O_RDWR|O_CREAT, 0666, 0);
+		/* Semaphore's name */
+		sprintf(txt, "sem");
+		sprintf(nb, "%d", i);
+		semName = strcat(txt, nb);
+		
+		semTab[i] = sem_open(semName, O_RDWR | O_CREAT, 0666, 0);
 	}
-	*/
+		
+	signal(SIGINT,applicateWhenSIGINT);
+	
+	
 	/* Client's choice */
 	printf("How many products do you want ?\n");
 	scanf("%d", &nbProduitDemande);	
@@ -56,13 +61,17 @@ int main(int argc, char* argv[])
 	//if(pthread_create(&t2, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
 	//if(pthread_create(&t3, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
 	
-	sleep(5); //?
-
-	/*Suppression semaphores
+	/*Delete semaphores */
 	for(i = 0; i<NB_SEM; i++)
 	{
-		semTab[i] = sem_unlink(semName);
+		/* Semaphore's name */
+		sprintf(txt, "sem");
+		sprintf(nb, "%d", i);
+		semName = strcat(txt, nb);
+		sem_unlink(semName);
 	}
-*/
-	pthread_exit(NULL); // le main se détruit mais pas les threads encore en cours
+	
+	free(txt); /* Free the memory allocated to txt with malloc */
+	
+	pthread_exit(NULL); /* Destroy the main but not the threads in progress */
 }

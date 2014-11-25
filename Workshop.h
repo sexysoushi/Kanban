@@ -3,4 +3,4 @@
 
 void* Workshop_thread_fct(void* arg);
 
-#endif //WORKSHOP_H
+#endif /* WORKSHOP_H */
