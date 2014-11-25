@@ -18,4 +18,5 @@ Mettre en place méthode Kanban avec des threads et des semaphores
 
 
 Un tableau de lancement général ou bien un tableau par poste de travail ???!
+un fournisseur par branche ou un pour chaque branche ?
 

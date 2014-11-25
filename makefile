@@ -5,17 +5,17 @@ EXEC = main
 
 all: $(EXEC)
 
-main : main.o Supplier.o Step.o Structures.h
+main : main.o Workshop.o Structures.h
 	$(CC) $(CFLAGS) -o $@  $^ $(LIBS) 
 
-main.o : main.c Supplier.h
+main.o : main.c Structures.h
 	$(CC) $(CFLAGS) -c $<
 
-Supplier.o : Supplier.c Supplier.h
+Workshop.o : Workshop.c Workshop.h
 	$(CC) $(CFLAGS) -c $<
 	
-Step.o : Step.c Step.h
-	$(CC) $(CFLAGS) -c $<
+#Step.o : Step.c Step.h
+	#$(CC) $(CFLAGS) -c $<
 
 clean : 
 	rm *~
