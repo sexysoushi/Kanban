@@ -3,6 +3,8 @@
 
 #include "List.h"
 
-void* Workshop_thread_fct(void* arg);
+void* Final_Product_thread_fct(void* arg);
+void* Middle_Step_thread_fct(void* arg);
+void* Supplier_Step_thread_fct(void* arg);
 
 #endif /* WORKSHOP_H */

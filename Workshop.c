@@ -1,59 +1,65 @@
 #include "Workshop.h"
 
 
-void* Workshop_thread_fct(void* arg)
-{
-	/*bool needProduct = false;
-
-	//Cas du produit finit
-	if(arg == FinishProduct)
+void* Supplier_Step_thread_fct(void* arg)
+{ 	/*
+	while(1)
 	{
+		// Réveil du fournisseur par mutex "mut1"  + condition "cond1"
+		
+		if(nbProductsStock < nbNeed)
+		{
+			//creation d'un nouveau produits
+			sem_post(semTab[0]); // Opération V
+		}
+		else
+			//endormissement sur condition "cond1"
+	}
+	*/
+}
+
+
+void* Middle_Step_thread_fct(void* arg)
+{
+	/*
+	while(1)
+	{
+		sem_wait(semTab[0]); //Opération P
+		
 		if(produit en stock)
 		{
-			//alors on sort
-			pthread_exit(NULL);
+			//fourni nb produit demande
+			needProduct = false;
 		}
 		else
 		{
 			//on reveil production en amont	
 			needProduct = true;
-			sem_post(semTab[0]); //V	
-		}
-	}
-
-	//Cas de l'intermediaire
-	if(arg == Middle)
-	{
-		if(needProduct)
-		{
-			sem_wait(semTab[0]); //P
-			if(produit en stock)
-			{
-				//fourni nb produit demande
-
-				needProduct = false;
-			}
-			else
-			{
-				//on reveil production en amont	
-				needProduct = true;
-				sem_post(semTab[1]); //V	
-			}
+			
 		}
 		
-	}
-
-	//Cas du fournisseur
-	if(arg == Supplier)
-	{
-		if(needProduct)
-		{
-			sem_wait(semTab[1]); //P
-			//fourni nb produit demande
-			
-			needProduct = false;
-			}
-		}
+		sem_post(semTab[1]); // Opération V	
 	}*/
-//voilà et pour le retour on regardera ensemble, déjà regarde ça et dis moi si c'est à peut près ça ?
+		
 }
+
+void* Final_Product_thread_fct(void* arg)
+{
+	/*bool needProduct = false;
+	
+	if(produit en stock)
+	{
+		//alors on sort
+		pthread_exit(NULL);
+	}
+	else
+	{
+		//on reveil production en amont	
+		needProduct = true;
+		sem_post(semTab[0]); //V	
+	}
+*/
+}
+
+
+

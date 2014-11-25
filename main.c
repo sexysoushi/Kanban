@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
 	printf("Preparation of the order in progress (%d products) ...\n", nbProduitDemande);
 
 	/*Threads creation workshop*/
-	//if(pthread_create(&t1, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
-	//if(pthread_create(&t2, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
-	//if(pthread_create(&t3, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
+	//if(pthread_create(&t1, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(-1);}
+	//if(pthread_create(&t2, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(-1);}
+	//if(pthread_create(&t3, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(-1);}
 	
 	/*Delete semaphores */
 	for(i = 0; i<NB_SEM; i++)
