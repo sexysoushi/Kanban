@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include "Structures.h"
 #include "Workshop.h"
+#include "List.h"
 
 /* Function used to post the error messages */
 void error(const char* msg) { perror(msg); exit(-1); }
