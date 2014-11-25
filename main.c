@@ -37,14 +37,14 @@ int main(int argc, char* argv[])
 	/* Allocations */
 	txt = (char*) malloc(50*sizeof(char));
 	
+	/* Semaphore's name */
+	sprintf(txt, "sem");
+	sprintf(nb, "%d", i);
+	semName = strcat(txt, nb);
+
 	/* Initialization : semaphores, conditions, mutex, available pieces */
 	for(i = 0; i<NB_SEM; i++)
 	{
-		/* Semaphore's name */
-		sprintf(txt, "sem");
-		sprintf(nb, "%d", i);
-		semName = strcat(txt, nb);
-		
 		semTab[i] = sem_open(semName, O_RDWR | O_CREAT, 0666, 0);
 	}
 		
@@ -64,10 +64,6 @@ int main(int argc, char* argv[])
 	/*Delete semaphores */
 	for(i = 0; i<NB_SEM; i++)
 	{
-		/* Semaphore's name */
-		sprintf(txt, "sem");
-		sprintf(nb, "%d", i);
-		semName = strcat(txt, nb);
 		sem_unlink(semName);
 	}
 	
