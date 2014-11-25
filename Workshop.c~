@@ -30,7 +30,6 @@ void* Workshop_thread_fct(void* arg)
 			if(produit en stock)
 			{
 				//fourni nb produit demande
-
 				needProduct = false;
 			}
 			else

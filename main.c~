@@ -12,7 +12,6 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "Workshop.h"
-#include "List.h"
 
 #define NB_SEM 99
 sem_t semTab[NB_SEM];
@@ -52,9 +51,9 @@ int main(int argc, char* argv[])
 	printf("Preparation of the order in progress (%d products) ...\n", nbProduitDemande);
 
 	/*Threads creation workshop*/
-	//if(pthread_create(&t1, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
-	//if(pthread_create(&t2, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
-	//if(pthread_create(&t3, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
+	if(pthread_create(&t1, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
+	if(pthread_create(&t2, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
+	if(pthread_create(&t3, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(1);}
 	
 	sleep(5); //?
 
