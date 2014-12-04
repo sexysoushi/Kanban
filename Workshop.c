@@ -1,13 +1,24 @@
 #include "Workshop.h"
 
+/* fonction à utiliser
+	int pthread_mutex_init(&mutexTab[NbMutex]);
+	int pthread_mutex_cond(&condTab[NbCond], &mutexTab[NbMutex]);
+
+	int pthread_mutex_lock(&mutexTab[NbMutex]);
+	int pthread_mutex_unlock(&mutexTab[NbMutex]);
+*/
+
+
 void* Launching_board_thread_fct(void* arg)
 {
-
+	//reveil poste en amont afin qu'il lui refournisse en pieces dont la carte magnetique détient la référence
 }
-
+/*
+Un homme flux récupère régulièrement les cartes aux différents postes de montage et les apporte à l’atelier en amont.
+*/
 void* Postman_thread_fct(void* arg)
 {
-
+	
 }
 
 void* Supplier_Step_thread_fct(void* arg)

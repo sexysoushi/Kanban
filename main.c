@@ -18,10 +18,14 @@
 
 #define NB_SEM 99
 #define NbMiddleStep 2
+#define NbMutex 1
+#define NbCond 1
 
 /* Global variables */
 sem_t *semTab[NB_SEM];
 pthread_t threadTab[NbMiddleStep];
+pthread_mutex_t mutexTab[NbMutex];
+pthread_cond_t condTab[NbCond];
 
 /* Function used to post the error messages */
 void error(const char* msg) { perror(msg); exit(-1); }
@@ -31,7 +35,7 @@ void applicateWhenSIGINT(int s) { printf("\nProblem : received stop signal !\n")
 
 int main(int argc, char* argv[])
 {
-	int nbProduitDemande, i, j;
+	int nbProduitDemande, i, j, k, l;
 	pthread_t t1, t2, t3, t4;
 	char nb[10];
 	char *semName, *txt;
@@ -40,8 +44,10 @@ int main(int argc, char* argv[])
 	txt = (char*) malloc(50*sizeof(char));
 
 	/* Initialization : semaphores, conditions, mutex, available pieces */
-	pthread_mutex_init(&mutex, NULL);
-	pthread_cond_init(&cond, NULL);
+	for(k = 0; k<NbMutex; k++)
+		pthread_mutex_init(&mutexTab[k], NULL);
+	for(l = 0; l<NbCond; l++)	
+		pthread_cond_init(&condTab[l], NULL);
 
 	for(i = 0; i<NB_SEM; i++)
 	{

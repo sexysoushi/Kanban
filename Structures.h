@@ -1,8 +1,6 @@
 #ifndef STRUCTURES_H
 #define	STRUCTURES_H
 
-
-
 //une carte magnetique
 typedef struct {
 	char* workshop_name;
