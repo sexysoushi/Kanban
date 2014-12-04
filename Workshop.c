@@ -1,6 +1,5 @@
 #include "Workshop.h"
 
-
 void* Supplier_Step_thread_fct(void* arg)
 { 	/*
 	while(1)
@@ -56,7 +55,7 @@ void* Final_Product_thread_fct(void* arg)
 	{
 		//on reveil production en amont	
 		needProduct = true;
-		sem_post(semTab[0]); //V	
+		sem_post(semTab[0]); // Operation V	
 	}
 */
 }

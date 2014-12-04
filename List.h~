@@ -16,7 +16,7 @@ typedef struct st_elem
 
 list* list_new(); /* Create new list */
 void list_insertHead(list*, void*);	/* Insert an element at the top of the list */
-void* getLastElementData(list*);	/* return the last element's data */
+void* getLastElementData(list*);
 void list_RemoveLastElem (list*);	/* Remove the last element of the list */
 void list_delete(list*);	/* Delete the entire list */
 

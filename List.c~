@@ -116,5 +116,82 @@ void list_delete (list *l)
 }
 
 
+/*
+list* list_new()
+{
+	list *l = (list*) malloc(sizeof(list));
+	l->value = NULL;
+	l->next
+}
+
+list* list_new(void* v)
+{
+	list *l = (list*) malloc(sizeof(list));
+	
+	l->value = v;
+	l->next = NULL;
+	
+	return l;
+}
+
+void list_add(list* l, void* v)
+{
+	list *e, *p;
+	
+	e = l;
+	p = NULL;
+	
+	while(e != NULL)
+	{
+		p = e;
+		e = e->next;
+	}
+	
+	e = (list_elem*) malloc(sizeof(list_elem));
+	e->value = v;
+	e->next = NULL;
+	
+	if(p != NULL)
+		p->next = e;
+}
+
+void list_del(list *l)
+{
+	list *e, *n;
+	
+	if(l == NULL)
+		return;
+	
+	e = l;
+	while(e!=NULL)
+	{
+		n = e->next;
+		free(e);
+		e = n;
+	}
+	
+	l = NULL;
+}
+
+void* list_take_elem(list* l, void* v)
+{
+	list *e, *n;
+	
+	if(l == NULL)
+		return;
+	
+	e = l;
+	n = e->next;
+	
+	do
+	{
+		if(e->value == v)
+ 			return e;
+		n = e->next;
+	}while(n != NULL && find != 1);
+	 
+}
+*/
+
 
 

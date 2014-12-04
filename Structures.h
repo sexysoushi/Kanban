@@ -31,5 +31,4 @@ typedef struct {
 	
 } Workshop;
 
-
 #endif 	/* STRUCTURES_H */
