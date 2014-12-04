@@ -1,6 +1,8 @@
 #ifndef STRUCTURES_H
 #define	STRUCTURES_H
 
+
+
 //une carte magnetique
 typedef struct {
 	char* workshop_name;
@@ -15,16 +17,15 @@ typedef struct {
 typedef struct {
 	//carte magnetique avec une reference
 	Card magnetic_card;
-	int nB_pieceByContainer = 5;
+	int nB_pieceByContainer;
 
 }Container;
 
 //un stock est situé à proximité de chaque poste
 //un stock est constitué de plusieurs conteneur
 typedef struct {
-	int nB_container = 5;
+	int nB_container;
 	//tableau de container
-	Container tabContainer[nB_container];
 
 }Stock;
 
@@ -47,7 +48,6 @@ typedef struct {
 	BAL Bal;
 	Stock stock;
 	char* name;
-	List<Indications> indications;
 	//une localisation
 	
 } Workshop;

@@ -14,11 +14,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "Workshop.h"
+#include "Structures.h"
 
 #define NB_SEM 99
+#define NbMiddleStep 2
 
 /* Global variables */
 sem_t *semTab[NB_SEM];
+pthread_t threadTab[NbMiddleStep];
 
 /* Function used to post the error messages */
 void error(const char* msg) { perror(msg); exit(-1); }
@@ -28,25 +31,24 @@ void applicateWhenSIGINT(int s) { printf("\nProblem : received stop signal !\n")
 
 int main(int argc, char* argv[])
 {
-	int nbProduitDemande, i;
-	pthread_t t1, t2,t3;
+	int nbProduitDemande, i, j;
+	pthread_t t1, t2, t3, t4;
 	char nb[10];
 	char *semName, *txt;
 
 	/* Allocations */
 	txt = (char*) malloc(50*sizeof(char));
 
-	/* Semaphore's name */
-	sprintf(txt, "sem");
-	sprintf(nb, "%d", i);
-	semName = strcat(txt, nb);
-
 	/* Initialization : semaphores, conditions, mutex, available pieces */
 	pthread_mutex_init(&mutex, NULL);
-	pthread_cond_init(&cond1, NULL);
-	pthread_cond_init(&cond2, NULL);
+	pthread_cond_init(&cond, NULL);
+
 	for(i = 0; i<NB_SEM; i++)
 	{
+		/* Semaphore's name */
+		sprintf(txt, "sem");
+		sprintf(nb, "%d", i);
+		semName = strcat(txt, nb);
 		semTab[i] = sem_open(semName, O_RDWR | O_CREAT, 0666, 0);
 	}
 
@@ -58,13 +60,24 @@ int main(int argc, char* argv[])
 	printf("Preparation of the order in progress (%d products) ...\n", nbProduitDemande);
 
 	/*Threads creation workshop*/
-	//if(pthread_create(&t1, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(-1);}
-	//if(pthread_create(&t2, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(-1);}
-	//if(pthread_create(&t3, NULL, Workshop_thread_fct, 0) != 0) { error("Error Workshop thread creation\n"); exit(-1);}
+	if(pthread_create(&t1, NULL, Launching_board_thread_fct, 0) != 0) { error("Error Launching_board_thread creation\n"); exit(-1);}
+	if(pthread_create(&t2, NULL, Postman_thread_fct, 0) != 0) { error("Error Postman_thread creation\n"); exit(-1);}
+	if(pthread_create(&t3, NULL, Supplier_Step_thread_fct, 0) != 0) { error("Error Supplier_Step_thread creation\n"); exit(-1);}
+	if(pthread_create(&t4, NULL, Final_Product_thread_fct, 0) != 0) { error("Error Final_Product_thread creation\n"); exit(-1);}
+	for(j = 0; j <= NbMiddleStep; j++)
+	{
+		if(pthread_create(&threadTab[i], NULL, Middle_Step_thread_fct, 0) != 0)
+			{ error("Error Final_Step_thread creation\n"); exit(-1);}
+	}
+
 
 	/*Delete semaphores */
 	for(i = 0; i<NB_SEM; i++)
 	{
+		/* Semaphore's name */
+		sprintf(txt, "sem");
+		sprintf(nb, "%d", i);
+		semName = strcat(txt, nb);
 		sem_unlink(semName);
 	}
 

@@ -1,5 +1,15 @@
 #include "Workshop.h"
 
+void* Launching_board_thread_fct(void* arg)
+{
+
+}
+
+void* Postman_thread_fct(void* arg)
+{
+
+}
+
 void* Supplier_Step_thread_fct(void* arg)
 { 	/*
 	while(1)
