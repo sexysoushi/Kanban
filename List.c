@@ -116,5 +116,22 @@ void list_delete (list *l)
 }
 
 
+void list_print_card(list* l)
+{
+	st_elem * currentElem = l->head;
+	Card *card = currentElem->data;
+	
+	if(l == NULL)
+		printf("La liste est vide !\n");
+	else
+		while(currentElem != NULL)
+		{
+			printf("Card number : %d \n", card->num_order);
+			printf("Piece reference : %s \n", card->ref_piece);
+			printf("\n");
+			currentElem = currentElem->next;
+		}
+}
+
 
 
