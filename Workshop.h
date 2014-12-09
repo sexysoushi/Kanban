@@ -1,9 +1,8 @@
 #ifndef WORKSHOP_H
 #define	WORKSHOP_H
 
-#include "List.h"
+//#include "List.h"
 #include "Structures.h"
-#include <semaphore.h>
 
 //Tableau de lancement
 void* Launching_board_thread_fct(void* arg);

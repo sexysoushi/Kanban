@@ -8,7 +8,7 @@ all: $(EXEC)
 main : main.o Workshop.o List.o Structures.h
 	$(CC) $(CFLAGS) -o $@  $^ $(LIBS) 
 
-main.o : main.c Structures.h
+main.o : main.c List.h Structures.h
 	$(CC) $(CFLAGS) -c $<
 
 Workshop.o : Workshop.c Workshop.h

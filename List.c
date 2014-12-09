@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "List.h"
+#include "Structures.h"
 
 list* list_new(void)
 {
@@ -56,7 +56,7 @@ void list_insertHead (list *l, void *data)
 }
 
 
-void* getLastElementData(list *l)
+void* list_getLastElementData(list *l)
 {	
 	void* value;
 	

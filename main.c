@@ -12,25 +12,50 @@
 void error(const char* msg) { perror(msg); exit(-1); }
 
 /* Function used as the mask of the signal SIGINT */
-void applicateWhenSIGINT(int s) { printf("\nProblem : received stop signal !\n"); exit(-1); }
+void applicateWhenSIGINT(int s) 
+{
+	//free();
+	error("\nProblem : received stop signal !\n"); 
+}
+
+void init()
+{
+	int i;
+	
+	/* Mutex */
+	for(i=0; i<nbMutex; i++)
+		pthread_mutex_init(&mutexTab[i], NULL);
+	/* Conditions */
+	for(i=0; i<nbCond; i++)	
+		pthread_cond_init(&condTab[i], NULL);
+	
+	Workshop wsTab[nbMiddleStep+1]; // Tab with the total number of workshop 
+	
+	//char nbName[10];
+	//char *wsName, *txt;
+
+	/* Allocations */
+	//txt = (char*) malloc(5*sizeof(char));
+	
+	/*for(i=1; i<nbMiddleStep; i++)
+	{
+		//Workshop's name 
+		sprintf(txt, "ws");
+		sprintf(nbName, "%d", i);
+		wsName = strcat(txt, nbName);
+	}*/
+	
+	//list* testlist = list_new();
+}
 
 int main(int argc, char* argv[])
 {
 	int i;
 	pthread_t t1, t2, t3, t4;
-	//char nbName[10];
-	//char *semName, *txt;
-
-	/* Allocations */
-	//txt = (char*) malloc(50*sizeof(char));
-
-	/* Initialization : semaphores, conditions, mutex, available pieces */
-	for(i=0; i<nbMutex; i++)
-		pthread_mutex_init(&mutexTab[i], NULL);
-		
-	for(i=0; i<nbCond; i++)	
-		pthread_cond_init(&condTab[i], NULL);
-
+	
+	/* Initializations and allocations*/
+	init();
+	
 	/*for(i=0; i<nbSem; i++)
 	{
 		//Semaphore's name 
@@ -59,7 +84,6 @@ int main(int argc, char* argv[])
 		if(pthread_create(&threadTab[i], NULL, Middle_Step_thread_fct, (void*) &i) != 0)
 			{ error("Error Final_Step_thread creation\n"); exit(-1);}
 	}
-
 
 	/*Delete semaphores 
 	for(i=0; i<nbSem; i++)
