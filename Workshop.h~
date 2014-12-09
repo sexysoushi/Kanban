@@ -1,6 +1,7 @@
 #ifndef WORKSHOP_H
 #define	WORKSHOP_H
 
+
 #include "Structures.h"
 
 //Tableau de lancement
