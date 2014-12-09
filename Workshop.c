@@ -6,13 +6,11 @@
 
 	int pthread_mutex_lock(&mutexTab[NbMutex]);
 	int pthread_mutex_unlock(&mutexTab[NbMutex]);
+
+void list_insertHead(list*, void*);	/* Insert an element at the top of the list 
+void* getLastElementData(list*);	/* return the last element's data 
+void list_RemoveLastElem (list*);	/* Remove the last element of the list 
 */
-
-
-void* Launching_board_thread_fct(void* arg)
-{
-	//reveil poste en amont afin qu'il lui refournisse en pieces dont la carte magnetique détient la référence
-}
 
 
 /*
@@ -20,19 +18,62 @@ Un homme flux récupère régulièrement les cartes aux différents postes de mo
 */
 void* Postman_thread_fct(void* arg)
 {
-	
+/*
+	Card cm; //carte magnetique
+	while(1)
+	{
+		pthread_mutex_lock(&mutexTab[1]); 	  		// P
+
+		//check toutes les BAL
+		cm = getLastElementData(listBAL);
+		list_RemoveLastElem (listBAL);
+
+		//ajoute à sa liste toutes les cartes magnetiques
+		list_insertHead(listPostman, (void*)cm);
+
+		pthread_mutex_unlock(&mutexTab[1]); 	  		// V 
+	}
+	//envoi ça liste au Tableau de lancement
+	pthread_cond_signal(&condTab[1]);	
+	*/
+}
+
+/*
+Tableau de lancement reveil poste en amont afin qu'il refournisse en pieces la carte magnetique détient la référence
+*/
+void* Launching_board_thread_fct(void* arg)
+{
+/*
+	LB lb;
+	pthread_cond_wait(&condTab[1], &mutexTab[1]);	
+	//check la liste envoyée par l'homme flux
+	while(1)
+	{
+		pthread_mutex_lock(&mutexTab[2]); 	  		// P 
+
+		//check toutes les cartes de l'homme flux
+		lb = getLastElementData(listPostman);
+		list_RemoveLastElem (listPostman);
+		
+		//on recupere les données de la carte magnetique
+		//?
+		
+		pthread_mutex_unlock(&mutexTab[2]); 	  		// V 
+	}
+	// On ordonne au fournisseur de reaprovisionner le poste de la carte
+	pthread_cond_signal(&condTab[2]);
+*/
 }
 
 void* Supplier_Step_thread_fct(void* arg)
 { 	
 	int i;
-	
 	while(1)
 	{
 		pthread_mutex_lock(&mutexTab[0]); 	  		/* P */
 		
 		// Wait for a fabrication order
-		pthread_cond_wait(&condTab[0], &mutexTab[0]);	
+		pthread_cond_wait(&condTab[2], &mutexTab[2]);	
 
 		// Create new product
 		for(i=0; i<nbPieceByContainer; i++)
@@ -42,7 +83,6 @@ void* Supplier_Step_thread_fct(void* arg)
 		}
 		
 		printf("Supplier : Container ready\n");
-		//sem_post(semTab[0]); 	/* V */
 		
 		pthread_mutex_unlock(&mutexTab[0]); 		/* V */
 	}

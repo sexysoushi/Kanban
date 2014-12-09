@@ -132,6 +132,3 @@ void list_print_card(list* l)
 			currentElem = currentElem->next;
 		}
 }
-
-
-
