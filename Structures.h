@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <unistd.h>
+#include "List.h"
 //#include <string.h>
 //#include <semaphore.h>
 //#include <sys/stat.h>
@@ -26,7 +27,7 @@ pthread_mutex_t mutexTab[nbMutex];
 pthread_cond_t condTab[nbCond];
 int nbProductsWanted;
 
-//une carte magnetique
+
 typedef struct {
 	char* workshop_name;
 	int nbmax_pieces_container;
@@ -36,43 +37,38 @@ typedef struct {
 	int num_order;
 } Card;
 
-//un container possede une carte magnetique, un nb de piece
+
 typedef struct {
 	//carte magnetique avec une reference
 	Card magnetic_card;
 	int nB_pieceByContainer;
-
 }Container;
+
 
 //un stock est situé à proximité de chaque poste
 //un stock est constitué de plusieurs conteneur
 typedef struct {
 	int nB_container;
-	//tableau de container
-
+	list *Stock_listContainer;
 }Stock;
 
-//chaque poste possede une BAL
-typedef struct {
-	//le nom du poste où elle se trouve
-	//comment on recupere le nom du poste? 
 
-	//cardList cl;
+
+typedef struct {
+	list *BAL_listCard;
 } BAL;
 
 
-//peut etre pas besoin d'une struture pour ça
 typedef struct {
-	Card card;
+	list *LB_listCard;
+}LB; //Launching Board
 
-}TdeL; //Tableau de Lancement
 
 typedef struct {
 	BAL Bal;
 	Stock stock;
 	char* name;
 	//une localisation
-	
 } Workshop;
 
 #endif 	/* STRUCTURES_H */

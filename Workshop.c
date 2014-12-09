@@ -105,7 +105,12 @@ void* Final_Product_thread_fct(void* arg)
 {
 	int* lastNumber = (int*) arg;
 	
-		
+	/*
+	while(1)
+	{
+	
+	}
+	*/
 }
 
 
