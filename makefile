@@ -18,5 +18,5 @@ List.o : List.c List.h
 	$(CC) $(CFLAGS) -c $<
 
 clean : 
-	rm *~
 	rm *.o
+	rm *~

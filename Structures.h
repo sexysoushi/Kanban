@@ -1,6 +1,31 @@
 #ifndef STRUCTURES_H
 #define	STRUCTURES_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <pthread.h>
+#include <unistd.h>
+//#include <string.h>
+//#include <semaphore.h>
+//#include <sys/stat.h>
+//#include <fcntl.h>
+
+
+#define nbMiddleStep 2
+#define nbMutex nbMiddleStep+1
+#define nbCond nbMiddleStep+1
+#define nbPieceByContainer 2
+//#define nbSem nbMiddleStep+1
+
+
+/* Global variables */
+//sem_t *semTab[nbSem];
+pthread_t threadTab[nbMiddleStep];
+pthread_mutex_t mutexTab[nbMutex];
+pthread_cond_t condTab[nbCond];
+int nbProductsWanted;
+
 //une carte magnetique
 typedef struct {
 	char* workshop_name;
