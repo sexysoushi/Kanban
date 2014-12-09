@@ -68,7 +68,7 @@ typedef struct {
 	BAL Bal;
 	Stock stock;
 	char* name;
-	//une localisation
+
 } Workshop;
 
 #endif 	/* STRUCTURES_H */

@@ -18,15 +18,15 @@ Un homme flux récupère régulièrement les cartes aux différents postes de mo
 */
 void* Postman_thread_fct(void* arg)
 {
-/*
+	/*
 	Card cm; //carte magnetique
 	while(1)
 	{
 		pthread_mutex_lock(&mutexTab[1]); 	  		// P
 
 		//check toutes les BAL
-		cm = getLastElementData(listBAL);
-		list_RemoveLastElem (listBAL);
+		cm = getLastElementData(BAL_listCard);
+		list_RemoveLastElem (BAL_listCard);
 
 		//ajoute à sa liste toutes les cartes magnetiques
 		list_insertHead(listPostman, (void*)cm);
