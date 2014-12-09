@@ -50,18 +50,18 @@ typedef struct {
 //un stock est constitué de plusieurs conteneur
 typedef struct {
 	int nB_container;
-	list *Stock_listContainer;
+	list *listContainer;
 }Stock;
 
 
 
 typedef struct {
-	list *BAL_listCard;
+	list *listCard;
 } BAL;
 
 
 typedef struct {
-	list *LB_listCard;
+	list *listCard;
 }LB; //Launching Board
 
 
