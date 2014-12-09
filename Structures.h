@@ -41,33 +41,33 @@ typedef struct {
 
 typedef struct {
 	//carte magnetique avec une reference
-	Card magnetic_card;
+	Card* magnetic_card;
 	int nB_pieceByContainer;
-}Container;
+} Container;
 
 
 //un stock est situé à proximité de chaque poste
 //un stock est constitué de plusieurs conteneur
 typedef struct {
 	int nB_container;
-	list *Stock_listContainer;
-}Stock;
+	list* Stock_listContainer;
+} Stock;
 
 
 
 typedef struct {
-	list *BAL_listCard;
+	list* BAL_listCard;
 } BAL;
 
 
 typedef struct {
-	list *LB_listCard;
-}LB; //Launching Board
+	list* LB_listCard;
+} LB; //Launching Board
 
 
 typedef struct {
-	BAL Bal;
-	Stock stock;
+	BAL* Bal;
+	Stock* Stock;
 	char* name;
 	//une localisation
 } Workshop;
