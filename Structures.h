@@ -50,26 +50,40 @@ typedef struct {
 //un stock est constitué de plusieurs conteneur
 typedef struct {
 	int nB_container;
+<<<<<<< HEAD
 	list* Stock_listContainer;
 } Stock;
+=======
+	list *listContainer;
+}Stock;
+>>>>>>> 36bd99a5462cd4a60737864c8dd064e31284ca1b
 
 
 
 typedef struct {
+<<<<<<< HEAD
 	list* BAL_listCard;
+=======
+	list *listCard;
+>>>>>>> 36bd99a5462cd4a60737864c8dd064e31284ca1b
 } BAL;
 
 
 typedef struct {
+<<<<<<< HEAD
 	list* LB_listCard;
 } LB; //Launching Board
+=======
+	list *listCard;
+}LB; //Launching Board
+>>>>>>> 36bd99a5462cd4a60737864c8dd064e31284ca1b
 
 
 typedef struct {
 	BAL* Bal;
 	Stock* Stock;
 	char* name;
-	//une localisation
+
 } Workshop;
 
 #endif 	/* STRUCTURES_H */
