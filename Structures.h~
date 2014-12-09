@@ -26,7 +26,6 @@ pthread_t threadTab[nbMiddleStep];
 pthread_mutex_t mutexTab[nbMutex];
 pthread_cond_t condTab[nbCond];
 int nbProductsWanted;
-list* Postman_listCard;
 
 
 typedef struct {
