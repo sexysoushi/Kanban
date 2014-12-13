@@ -1,6 +1,6 @@
 #include "Workshop.h"
 
-/* fonction à utiliser
+/* fonctions à utiliser
 	int pthread_mutex_init(&mutexTab[NbMutex]);
 	int pthread_mutex_cond(&condTab[NbCond], &mutexTab[NbMutex]);
 
@@ -18,8 +18,8 @@ Un homme flux récupère régulièrement les cartes aux différents postes de mo
 */
 void* Postman_thread_fct(void* arg)
 {
-	
 	void* recup_cm; //carte magnetique
+	
 	while(1)
 	{
 		pthread_mutex_lock(&mutexTab[1]); 	  		// P
@@ -38,6 +38,7 @@ void* Postman_thread_fct(void* arg)
 	
 }
 
+
 /*
 Tableau de lancement reveil poste en amont afin qu'il refournisse en pieces la carte magnetique détient la référence
 */
@@ -45,6 +46,7 @@ void* Launching_board_thread_fct(void* arg)
 {
 	Card *tmp_card;
 	void* recup_tmp;
+	
 	pthread_cond_wait(&condTab[1], &mutexTab[1]);	
 	//check la liste envoyée par l'homme flux
 	while(1)
@@ -73,9 +75,17 @@ void* Launching_board_thread_fct(void* arg)
 
 }
 
+
 void* Supplier_Step_thread_fct(void* arg)
 { 	
+	int* nb = (int*) arg;
 	int i;
+	Workshop supplier;
+	
+	supplier = initWorkshop(*nb);
+	supplier.name = concatStringInt("Supplier", *nb);
+	
+	
 	while(1)
 	{
 		pthread_mutex_lock(&mutexTab[0]); 	  		/* P */
@@ -93,13 +103,22 @@ void* Supplier_Step_thread_fct(void* arg)
 		printf("Supplier : Container ready\n");
 		
 		pthread_mutex_unlock(&mutexTab[0]); 		/* V */
+		
+		printf("test \n");
 	}
+	
+	pthread_exit(NULL);
 }
 
 
 void* Middle_Step_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
+	Workshop workshop;
+	
+	workshop = initWorkshop(*numberThread);
+	workshop.name = concatStringInt("Workshop", *numberThread);
+	
 	
 	/*
 	while(1)
@@ -107,19 +126,106 @@ void* Middle_Step_thread_fct(void* arg)
 		// num des conditions, mutex = numberThread +1
 	}
 	*/
+	
+	pthread_exit(NULL);
 }
+
 
 void* Final_Product_thread_fct(void* arg)
 {
 	int* lastNumber = (int*) arg;
-	
+		
 	/*
 	while(1)
 	{
 	
 	}
 	*/
+	pthread_exit(NULL);
+}
+
+
+char* concatStringInt(char* s, int nb)
+{
+	char *txt, *tmp=NULL;
+	
+	txt = (char*) malloc(15*sizeof(char));
+	tmp = (char*) malloc(15*sizeof(char));
+	sprintf(txt, "%s", s);
+	sprintf(tmp, "%d", nb);
+	txt = strcat(txt, tmp);
+	
+	free(tmp);
+	tmp = NULL;
+	
+	return txt;
+}
+
+
+BAL initBAL()
+{
+	BAL b;
+	b.listCard = NULL;
+	return b;	
+}
+
+
+Stock initStock()
+{
+	Stock st;
+	st.nbContainer = 0;
+	st.listContainer = NULL;
+	return st;
+}
+
+
+Card initCard()
+{
+	Card cd;
+	cd.workshopName = NULL;
+	cd.nbMaxPiecesContainer = 0;
+	cd.refPiece = NULL;
+	cd.designationPiece = NULL;
+	cd.nameWorkshopSupplier = NULL;
+	cd.numOrder = 0;
+	return cd;
+}
+
+
+Container initContainer()
+{
+	Container cont;
+	cont.nbPieces = 0;
+	cont.magneticCard = initCard();
+	return cont;
+}
+
+Workshop initWorkshop(int number)
+{
+	Workshop ws;
+	ws.name = NULL;
+	ws.stock = initStock();
+	ws.bal = initBAL();
+	ws.actualUsedContainer = initContainer();
+	ws.refCard = initCard();
+	return ws;	 	
 }
 
 
 
+
+
+	//char *wsName, *txt;
+
+	/* Allocations */
+	//txt = (char*) malloc(5*sizeof(char));
+	
+	/*for(i=1; i<nbMiddleStep; i++)
+	{
+		//Workshop's name 
+		sprintf(txt, "ws");
+		sprintf(nbName, "%d", i);
+		wsName = strcat(txt, nbName);
+	}*/
+	
+	//list* testlist = list_new();

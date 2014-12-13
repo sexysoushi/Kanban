@@ -6,52 +6,49 @@
 #include <signal.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <string.h>
 #include "List.h"
-//#include <string.h>
-//#include <semaphore.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
 
 
 #define nbMiddleStep 2
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
 #define nbPieceByContainer 2
-//#define nbSem nbMiddleStep+1
 
 
 /* Global variables */
-//sem_t *semTab[nbSem];
-pthread_t threadTab[nbMiddleStep];
-pthread_mutex_t mutexTab[nbMutex];
-pthread_cond_t condTab[nbCond];
-int nbProductsWanted;
-list* Postman_listCard;
+pthread_t t1, t2, t3, t4;	// 4 threads which can't change
+pthread_t threadTab[nbMiddleStep]; 	// Threads for dynamic number of workshop
+pthread_mutex_t mutexTab[nbMutex];	
+pthread_cond_t condTab[nbCond];	
+int nbProductsWanted;	// Client's asking
+list* Postman_listCard;	
+list* referenceListCard;
 
 
 typedef struct {
-	char* workshop_name;
-	int nbmax_pieces_container;
-	char* ref_piece;
-	char* designation_piece;
-	int num_workshop_supplier;
-	int num_order;
+	char* workshopName;
+	int nbMaxPiecesContainer;
+	char* refPiece;
+	char* designationPiece;
+	char* nameWorkshopSupplier;
+	int numOrder;
 } Card;
 
 
 typedef struct {
 	//carte magnetique avec une reference
-	Card* magnetic_card;
-	int nB_pieceByContainer;
+	Card magneticCard;
+	int nbPieces;
 } Container;
 
 
 //un stock est situé à proximité de chaque poste
 //un stock est constitué de plusieurs conteneur
 typedef struct {
-	int nB_container;
+	int nbContainer;
 	list *listContainer;
-}Stock;
+} Stock;
 
 
 typedef struct {
@@ -60,16 +57,17 @@ typedef struct {
 
 
 typedef struct {
-	list *listCard;
-}LB; //Launching Board
-
+	BAL bal;
+	Stock stock;
+	Container actualUsedContainer;
+	Card refCard;
+	char* name;
+} Workshop;
 
 
 typedef struct {
-	BAL* Bal;
-	Stock* Stock;
-	char* name;
+	list *listCard;
+}LB; //Launching Board
 
-} Workshop;
 
 #endif 	/* STRUCTURES_H */

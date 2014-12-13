@@ -1,24 +1,33 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef H_LISTESIMPLE
+#define H_LISTESIMPLE
 
-typedef struct elem
-{
-	void* data;
-    struct elem* next;
-} st_elem;
+#include <stddef.h>             /* pour size_t */
 
-typedef struct st_elem
+
+typedef struct item
 {
-	st_elem *head;
-	st_elem *tail;
+   struct item *next;
+   void *data;
+} item_s;
+
+typedef struct st_list
+{
+   item_s *head;
+   item_s *currentElem;
 } list;
 
+list *list_new (void);	// Create new list 
+void list_insert (list *, void *);	// Insert a new element at the end of the list 
+void list_removeNext (list *);	// Remove the next element of the list 
+void list_removeFirst (list *);	// Remove the first element of the list
+void list_next (list *);	// Access to the next element
+void* list_data (list *);	// Access to the data 
+void list_first (list *);	// Access to the firs element of the list 
+void list_last (list *);	// Access to the last element of the list 
+size_t listizeof (list *);	// Calculate the number of elements in the list
+void list_delete (list **);	// Delete the list in the memory
 
-list* list_new(); /* Create new list */
-void list_insertHead(list*, void*);	/* Insert an element at the top of the list */
-void* list_getLastElementData(list*);	/* return the last element's data */
-void list_RemoveLastElem (list*);	/* Remove the last element of the list */
-void list_delete(list*);	/* Delete the entire list */
-void print_list_card(list*);	/* Print all the cards which are in the list */
+void list_print_char (list *);
+void list_print_Card (list *);
 
-#endif /* LIST_H */
+#endif /* not H_LISTESIMPLE */
