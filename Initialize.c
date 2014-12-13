@@ -34,3 +34,68 @@ list* initListPossibleCard()
 }
 
 
+char* concatStringInt(char* s, int nb)
+{
+	char *txt, *tmp=NULL;
+	
+	txt = (char*) malloc(15*sizeof(char));
+	tmp = (char*) malloc(15*sizeof(char));
+	sprintf(txt, "%s", s);
+	sprintf(tmp, "%d", nb);
+	txt = strcat(txt, tmp);
+	
+	free(tmp);
+	tmp = NULL;
+	
+	return txt;
+}
+
+
+BAL initBAL()
+{
+	BAL b;
+	b.listCard = NULL;
+	return b;	
+}
+
+
+Stock initStock()
+{
+	Stock st;
+	st.nbContainer = 0;
+	st.listContainer = NULL;
+	return st;
+}
+
+
+Card initCard()
+{
+	Card cd;
+	cd.workshopName = NULL;
+	cd.nbMaxPiecesContainer = 0;
+	cd.refPiece = NULL;
+	cd.designationPiece = NULL;
+	cd.nameWorkshopSupplier = NULL;
+	cd.numOrder = 0;
+	return cd;
+}
+
+
+Container initContainer()
+{
+	Container cont;
+	cont.nbPieces = 0;
+	cont.magneticCard = initCard();
+	return cont;
+}
+
+Workshop initWorkshop(int number)
+{
+	Workshop ws;
+	ws.name = NULL;
+	ws.stock = initStock();
+	ws.bal = initBAL();
+	ws.actualUsedContainer = initContainer();
+	ws.refCard = initCard();
+	return ws;	 	
+}
