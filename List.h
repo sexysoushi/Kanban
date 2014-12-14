@@ -1,7 +1,7 @@
 #ifndef H_LISTESIMPLE
 #define H_LISTESIMPLE
 
-#include <stddef.h>             /* pour size_t */
+//#include <stddef.h>             /* pour size_t */
 
 
 typedef struct item
@@ -14,6 +14,7 @@ typedef struct st_list
 {
    item_s *head;
    item_s *currentElem;
+   int nbElem;
 } list;
 
 list *list_new (void);	// Create new list 
@@ -24,8 +25,11 @@ void list_next (list *);	// Access to the next element
 void* list_data (list *);	// Access to the data 
 void list_first (list *);	// Access to the firs element of the list 
 void list_last (list *);	// Access to the last element of the list 
-size_t listizeof (list *);	// Calculate the number of elements in the list
+//size_t listizeof (list *);	// Calculate the number of elements in the list
 void list_delete (list **);	// Delete the list in the memory
+
+char* list_seek_char(char*, list*);
+void* list_seek_voidstar(char*, list*);
 
 void list_print_char (list *);
 void list_print_Card (list *);

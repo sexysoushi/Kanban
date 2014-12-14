@@ -41,6 +41,13 @@ int main(int argc, char* argv[])
 	/* Mask for SIGINT signal */
 	signal(SIGINT,applicateWhenSIGINT);
 
+	printf("\n");
+
+	/* Declaration of the reference card for each workshop */
+	initListPossibleCard();
+
+	list_print_Card(referenceListCard);
+	
 	/* Client's choice */
 	printf("How many products do you want ?\n");
 	scanf("%d", &nbProductsWanted);
@@ -62,8 +69,6 @@ int main(int argc, char* argv[])
 			{ error("Error Final_Step_thread creation\n"); exit(-1);}
 	}
 
-	/* Declaration of the reference card for each workshop */
-	referenceListCard = initListPossibleCard();
 
 	pthread_exit(NULL); /* Destroy the main but not the threads in progress */
 }

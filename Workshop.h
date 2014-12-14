@@ -2,6 +2,7 @@
 #define	WORKSHOP_H
 
 #include "Structures.h"
+#include "Initialize.h"
 
 //Tableau de lancement
 void* Launching_board_thread_fct(void* arg);
@@ -13,11 +14,5 @@ void* Supplier_Step_thread_fct(void* arg);
 void* Middle_Step_thread_fct(void* arg);
 //Poste final
 void* Final_Product_thread_fct(void* arg);
-
-
-
-char* concatStringInt(char*, int);
-
-Workshop initWorkshop();
 
 #endif /* WORKSHOP_H */

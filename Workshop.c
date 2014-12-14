@@ -1,13 +1,10 @@
 #include "Workshop.h"
-#include "Initialize.h"
 
 /* fonctions à utiliser
 	int pthread_mutex_init(&mutexTab[NbMutex]);
 	int pthread_mutex_cond(&condTab[NbCond], &mutexTab[NbMutex]);
-
 	int pthread_mutex_lock(&mutexTab[NbMutex]);
 	int pthread_mutex_unlock(&mutexTab[NbMutex]);
-
 void list_insertHead(list*, void*);	/* Insert an element at the top of the list 
 void* getLastElementData(list*);	/* return the last element's data 
 void list_RemoveLastElem (list*);	/* Remove the last element of the list 
@@ -81,10 +78,9 @@ void* Supplier_Step_thread_fct(void* arg)
 { 	
 	int* nb = (int*) arg;
 	int i;
-	Workshop supplier;
+	//Workshop *supplier = (Workshop*) malloc(sizeof(Workshop));
 	
-	supplier = initWorkshop(*nb);
-	supplier.name = concatStringInt("Supplier", *nb);
+	//supplier = initWorkshop("Supplier", *nb);
 	
 	
 	while(1)
@@ -115,10 +111,9 @@ void* Supplier_Step_thread_fct(void* arg)
 void* Middle_Step_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
-	Workshop workshop;
+	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
 	
-	workshop = initWorkshop(*numberThread);
-	workshop.name = concatStringInt("Workshop", *numberThread);
+	workshop = initMiddleStep(workshop, *numberThread);
 	
 	
 	/*

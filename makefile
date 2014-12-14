@@ -1,12 +1,12 @@
 CC = gcc
-CFLAGS = -W -Werror -g
+CFLAGS = -W -Werror -g #-O0 -emit-swf
 LIBS = -lpthread
 EXEC = main
 
 all: $(EXEC)
 
 main : main.o Workshop.o Initialize.o List.o Structures.h
-	$(CC) $(CFLAGS) -o $@  $^ $(LIBS) 
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)   #main.swf
 
 main.o : main.c List.h Structures.h
 	$(CC) $(CFLAGS) -c $<

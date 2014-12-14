@@ -3,12 +3,14 @@
 
 #include "Structures.h"
 
-list* initListPossibleCard();
+void initListPossibleCard();
+Workshop* initMiddleStep(Workshop*, int);
+
 BAL initBAL();
 Stock initStock();
 Card initCard();
 Container initContainer();
-Workshop initWorkshop(int);
+Workshop* initWorkshop(Workshop*, char*, int);
 
 char* concatStringInt(char*, int);
 

@@ -1,11 +1,11 @@
 #include "Initialize.h"
 
 
-list* initListPossibleCard()
+void initListPossibleCard()
 {
+	int nbDiffentCard = 4;
 	int i;
-	Card *newCard;
-	newCard = (Card*) malloc(sizeof(Card));
+	Card *newCard[nbDiffentCard];
 	referenceListCard = list_new();
 	
 	char cardWorkshopName[][15] = {"Supplier1", "Workshop1", "Workshop2", "FinalStep1"};
@@ -14,24 +14,51 @@ list* initListPossibleCard()
 	char cardNameWorkshopSupplier[][15] = {"none", "Supplier1", "Workshop1", "Workshop2"};
 	int cardNumOrder[4] = {0, 1, 2, 3};
 	
-	printf("\nInitialisation liste de Card possibles :\n");
+	printf("Global initilization of the global list of possible <Card> :\n");
 	
-	for(i=0; i<4; i++)
+	for(i=0; i<nbDiffentCard; i++)
 	{
-		newCard->workshopName = cardWorkshopName[i];
-		newCard->nbMaxPiecesContainer = nbPieceByContainer;
-		newCard->refPiece = cardRefPiece[i];
-		newCard->designationPiece = cardDesignationPiece[i];
-		newCard->nameWorkshopSupplier = cardNameWorkshopSupplier[i];
-		newCard->numOrder = cardNumOrder[0];
+		newCard[i] = (Card*) malloc(sizeof(Card));
+		newCard[i]->workshopName = cardWorkshopName[i];
+		newCard[i]->nbMaxPiecesContainer = nbPieceByContainer;
+		newCard[i]->refPiece = cardRefPiece[i];
+		newCard[i]->designationPiece = cardDesignationPiece[i];
+		newCard[i]->nameWorkshopSupplier = cardNameWorkshopSupplier[i];
+		newCard[i]->numOrder = cardNumOrder[0];
 	
-		list_insert(referenceListCard, (void*) newCard);
-		list_print_Card(referenceListCard);
+		list_insert(referenceListCard, newCard[i]);
 	}
+	list_print_Card(referenceListCard);
+	printf("\n");
 	
-	free(newCard);
-	newCard = NULL;
+	/*
+	==> free a faire mais pas ici : a la fin du programme !
+	for (i=0; i<nbDiffentCard; i++)
+	{
+		free(newCard[i]);
+		newCard[i] = NULL;
+	}*/
 }
+
+
+
+Workshop* initMiddleStep(Workshop *W, int num)
+{
+	W = initWorkshop(W, "Workshop", num);
+	Card* tmpCard =  (Card*) list_seek_voidstar(W->name, referenceListCard);
+	printf("toto2\n");
+	//W->refCard = *tmpCard;
+	
+	/*printf("%s ", (char*) W->refCard.workshopName);
+	printf("%d ", (int) W->refCard.nbMaxPiecesContainer);
+	printf("%s ", (char*) W->refCard.refPiece);
+	printf("%s ", (char*) W->refCard.designationPiece);
+	printf("%s ", (char*) W->refCard.nameWorkshopSupplier);
+	//printf("%d ", (int) W->refCard);*/
+	
+	return W;
+}
+
 
 
 char* concatStringInt(char* s, int nb)
@@ -89,13 +116,14 @@ Container initContainer()
 	return cont;
 }
 
-Workshop initWorkshop(int number)
+Workshop* initWorkshop(Workshop* ws, char* s, int number)
 {
-	Workshop ws;
-	ws.name = NULL;
-	ws.stock = initStock();
-	ws.bal = initBAL();
-	ws.actualUsedContainer = initContainer();
-	ws.refCard = initCard();
-	return ws;	 	
+	ws->name = concatStringInt(s, number);;
+	ws->stock = initStock();
+	ws->bal = initBAL();
+	ws->actualUsedContainer = initContainer();
+	ws->refCard = initCard();
+	return ws;
 }
+
+

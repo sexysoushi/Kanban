@@ -10,7 +10,7 @@
 #include "List.h"
 
 
-#define nbMiddleStep 2
+#define nbMiddleStep 1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
 #define nbPieceByContainer 2
