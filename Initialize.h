@@ -1,3 +1,8 @@
+/* Application of the Kanban's method
+ * 
+ * Authors : Renaud Guillaume - Schiavi Barbara
+ */
+ 
 #ifndef INITIALIZE_H
 #define	INITIALIZE_H
 
@@ -11,6 +16,7 @@ Stock initStock();
 Card initCard();
 Container initContainer();
 Workshop* initWorkshop(Workshop*, char*, int);
+LB initLB();
 
 char* concatStringInt(char*, int);
 

@@ -1,3 +1,8 @@
+/* Application of the Kanban's method
+ * 
+ * Authors : Renaud Guillaume - Schiavi Barbara
+ */
+
 #include "Initialize.h"
 
 
@@ -20,16 +25,6 @@ void initListPossibleCard(char** cardWorkshopName, char** cardRefPiece, char** c
 	
 		list_insert(referenceListCard, newCard[i]);
 	}
-	list_print_Card(referenceListCard);
-	printf("\n");
-	
-	/*
-	==> free a faire mais pas ici : a la fin du programme !
-	for (i=0; i<nbDiffentCard; i++)
-	{
-		free(newCard[i]);
-		newCard[i] = NULL;
-	}*/
 }
 
 
@@ -37,22 +32,19 @@ void initListPossibleCard(char** cardWorkshopName, char** cardRefPiece, char** c
 Workshop* initMiddleStep(Workshop *W, int num)
 {
 	W = initWorkshop(W, "Workshop", num);
-	Card* tmpCard =  (Card*) list_seek_voidstar(W->name, referenceListCard);
-	printf("toto2\n");
-	//W->refCard = *tmpCard;
 	
-	/*printf("%s ", (char*) W->refCard.workshopName);
-	printf("%d ", (int) W->refCard.nbMaxPiecesContainer);
-	printf("%s ", (char*) W->refCard.refPiece);
-	printf("%s ", (char*) W->refCard.designationPiece);
-	printf("%s ", (char*) W->refCard.nameWorkshopSupplier);
-	//printf("%d ", (int) W->refCard);*/
+	/* Protection by mutex because of referenceListCard multiple access */
+	pthread_mutex_lock(&initCardRef);
+	Card* tmpCard = (Card*) list_seek_voidstar(W->name, referenceListCard);
+	pthread_mutex_unlock(&initCardRef);
+	
+	W->refCard = *tmpCard;
 	
 	return W;
 }
 
 
-
+/* Return the string "s" with number "nb" at the end */
 char* concatStringInt(char* s, int nb)
 {
 	char *txt, *tmp=NULL;
@@ -73,7 +65,7 @@ char* concatStringInt(char* s, int nb)
 BAL initBAL()
 {
 	BAL b;
-	b.listCard = NULL;
+	b.listCard = list_new();
 	return b;	
 }
 
@@ -82,7 +74,7 @@ Stock initStock()
 {
 	Stock st;
 	st.nbContainer = 0;
-	st.listContainer = NULL;
+	st.listContainer = list_new();
 	return st;
 }
 
@@ -116,6 +108,14 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number)
 	ws->actualUsedContainer = initContainer();
 	ws->refCard = initCard();
 	return ws;
+}
+
+
+LB initLB()
+{
+	LB lb;
+	lb.listCard = list_new();
+	return lb;
 }
 
 

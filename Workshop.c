@@ -1,3 +1,8 @@
+/* Application of the Kanban's method
+ * 
+ * Authors : Renaud Guillaume - Schiavi Barbara
+ */
+
 #include "Workshop.h"
 
 /* fonctions à utiliser
@@ -18,7 +23,7 @@ void* Postman_thread_fct(void* arg)
 {
 	void* recup_cm; //carte magnetique
 	
-	while(1)
+	/*while(1)
 	{
 		pthread_mutex_lock(&mutexTab[1]); 	  		// P
 
@@ -30,7 +35,7 @@ void* Postman_thread_fct(void* arg)
 		//list_insertHead(Postman_listCard, recup_cm);
 
 		pthread_mutex_unlock(&mutexTab[1]); 	  		// V 
-	}
+	}*/
 	//envoi ça liste au Tableau de lancement
 	pthread_cond_signal(&condTab[1]);	
 	
@@ -45,7 +50,7 @@ void* Launching_board_thread_fct(void* arg)
 	Card *tmp_card;
 	void* recup_tmp;
 	
-	pthread_cond_wait(&condTab[1], &mutexTab[1]);	
+	/*pthread_cond_wait(&condTab[1], &mutexTab[1]);	
 	//check la liste envoyée par l'homme flux
 	while(1)
 	{
@@ -70,7 +75,7 @@ void* Launching_board_thread_fct(void* arg)
 	}
 	// On ordonne au fournisseur de reaprovisionner le poste de la carte
 	pthread_cond_signal(&condTab[2]);
-
+	*/
 }
 
 
@@ -83,9 +88,9 @@ void* Supplier_Step_thread_fct(void* arg)
 	//supplier = initWorkshop("Supplier", *nb);
 	
 	
-	while(1)
+	/*while(1)
 	{
-		pthread_mutex_lock(&mutexTab[0]); 	  		/* P */
+		pthread_mutex_lock(&mutexTab[0]); 	  		// P 
 		
 		// Wait for a fabrication order
 		pthread_cond_wait(&condTab[2], &mutexTab[2]);	
@@ -99,11 +104,11 @@ void* Supplier_Step_thread_fct(void* arg)
 		
 		printf("Supplier : Container ready\n");
 		
-		pthread_mutex_unlock(&mutexTab[0]); 		/* V */
+		pthread_mutex_unlock(&mutexTab[0]); 		// V 
 		
 		printf("test \n");
 	}
-	
+	*/
 	pthread_exit(NULL);
 }
 
@@ -116,6 +121,7 @@ void* Middle_Step_thread_fct(void* arg)
 	workshop = initMiddleStep(workshop, *numberThread);
 	
 	
+	printf("toto\n");
 	/*
 	while(1)
 	{

@@ -1,8 +1,10 @@
-#ifndef H_LISTESIMPLE
-#define H_LISTESIMPLE
+/* Application of the Kanban's method
+ * 
+ * Authors : Renaud Guillaume - Schiavi Barbara
+ */
 
-//#include <stddef.h>             /* pour size_t */
-
+#ifndef LIST_H
+#define LIST_H
 
 typedef struct item
 {
@@ -25,7 +27,6 @@ void list_next (list *);	// Access to the next element
 void* list_data (list *);	// Access to the data 
 void list_first (list *);	// Access to the firs element of the list 
 void list_last (list *);	// Access to the last element of the list 
-//size_t listizeof (list *);	// Calculate the number of elements in the list
 void list_delete (list **);	// Delete the list in the memory
 
 char* list_seek_char(char*, list*);
@@ -34,4 +35,5 @@ void* list_seek_voidstar(char*, list*);
 void list_print_char (list *);
 void list_print_Card (list *);
 
-#endif /* not H_LISTESIMPLE */
+#endif /* LIST_H */
+

@@ -1,7 +1,7 @@
 /* Application of the Kanban's method
  * 
  * Authors : Renaud Guillaume - Schiavi Barbara
- * Last modification : November 22, 2014
+ * Last modification : December 15, 2014
  */
 
 #include "Initialize.h"
@@ -15,6 +15,7 @@ void error(const char* msg) { perror(msg); exit(-1); }
 /* Function used as the mask of the signal SIGINT */
 void applicateWhenSIGINT(int s) 
 {
+	list_delete(&referenceListCard);
 	error("\nProblem : received stop signal !\n"); 
 }
 
@@ -23,10 +24,10 @@ int main(int argc, char* argv[])
 {
 	int i;
 	int *tabNumber;
-	char* cardWorkshopName[15] = {"Supplier1", "Workshop1", "Workshop2", "FinalStep1"};
-	char* cardRefPiece[6] = {"S1P1", "W1P1", "W2P1", "L1P1"};
-	char* cardDesignationPiece[6] = {"Part1", "Part2", "Part3", "Part4"};
-	char* cardNameWorkshopSupplier[15] = {"none", "Supplier1", "Workshop1", "Workshop2"};
+	char* cardWorkshopName[15] = {"Supplier1", "Workshop1", "Workshop2", "Workshop3", "Workshop4", "FinalStep1"};
+	char* cardRefPiece[6] = {"S1P1", "W1P1", "W2P1", "W3P1", "W4P1", "L1P1"};
+	char* cardDesignationPiece[6] = {"Part1", "Part2", "Part3", "Part4", "Part5", "Part6"};
+	char* cardNameWorkshopSupplier[15] = {"none", "Supplier1", "Workshop1", "Workshop2", "Workshop3", "Workshop4"};
 	int cardNumOrder[4] = {0, 1, 2, 3};
 	
 	/* Initializations */
@@ -58,8 +59,6 @@ int main(int argc, char* argv[])
 	printf("How many products do you want ?\n");
 	scanf("%d", &nbProductsWanted);
 	printf("Preparation of the order in progress (%d products) ...\n", nbProductsWanted);
-
-	list_print_Card(referenceListCard);	
 	
 	/*Threads creation workshop*/
 	if(pthread_create(&t1, NULL, Launching_board_thread_fct, 0)!=0)
@@ -77,8 +76,17 @@ int main(int argc, char* argv[])
 			{ error("Error Final_Step_thread creation\n"); exit(-1);}
 	}
 
-
-	pthread_exit(NULL); /* Destroy the main but not the threads in progress */
+	pthread_join(t1,NULL);
+	pthread_join(t2,NULL);
+	pthread_join(t3,NULL);
+	pthread_join(t4,NULL);
+	for(i=0; i<(nbMiddleStep); i++)
+		pthread_join(threadTab[i],NULL); 
+		
+	list_delete(&referenceListCard);
+	
+	/* pthread_exit(NULL); Destroy the main but not the threads in progress */
+	return 0;
 }
 
 

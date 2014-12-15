@@ -1,3 +1,8 @@
+/* Application of the Kanban's method
+ * 
+ * Authors : Renaud Guillaume - Schiavi Barbara
+ */
+
 #ifndef STRUCTURES_H
 #define	STRUCTURES_H
 
@@ -9,7 +14,8 @@
 #include <string.h>
 #include "List.h"
 
-#define nbDiffentCard 4 
+
+#define nbDiffentCard 6
 #define nbMiddleStep 1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
@@ -17,10 +23,14 @@
 
 
 /* Global variables */
-pthread_t t1, t2, t3, t4;	// 4 threads which can't change
+pthread_t t1, t2, t3, t4;	// 4 threads which are indispensable
 pthread_t threadTab[nbMiddleStep]; 	// Threads for dynamic number of workshop
+
+pthread_mutex_t initCardRef;
 pthread_mutex_t mutexTab[nbMutex];	
+
 pthread_cond_t condTab[nbCond];	
+
 int nbProductsWanted;	// Client's asking
 list* Postman_listCard;	
 list* referenceListCard;
@@ -37,7 +47,6 @@ typedef struct {
 
 
 typedef struct {
-	//carte magnetique avec une reference
 	Card magneticCard;
 	int nbPieces;
 } Container;
@@ -69,5 +78,9 @@ typedef struct {
 	list *listCard;
 }LB; //Launching Board
 
+
+/*Functions implemented before the main */
+void applicateWhenSIGINT(int);
+void error(const char*);
 
 #endif 	/* STRUCTURES_H */

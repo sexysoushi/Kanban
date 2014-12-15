@@ -1,3 +1,8 @@
+/* Application of the Kanban's method
+ * 
+ * Authors : Renaud Guillaume - Schiavi Barbara
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "Structures.h"
@@ -129,24 +134,6 @@ void list_last (list * l)
 
 
 
-/*size_t listizeof (list * l)
-{
-   size_t n = 0;
-
-   if (l)
-   {
-      list_first (l);
-      while (l->currentElem != NULL)
-      {
-         n++;
-         list_next (l);
-      }
-   }
-   return n;
-}*/
-
-
-
 void list_delete (list ** pl)
 {
    	if (pl && *pl)
@@ -231,21 +218,18 @@ void list_print_Card (list * l)
    	Card *tmpCard;
 
    	list_first (l);
+   	
    	for (i = 0; i < size; i++)
 	{
 		tmpCard = (Card*) list_data (l);
       	if (list_data (l) != NULL)
       	{
-        	printf("%s ", (char *) tmpCard->workshopName);
-      		printf("%d ", (int) tmpCard->nbMaxPiecesContainer);
-      		printf("%s ", (char *) tmpCard->refPiece);
-      		printf("%s ", (char *) tmpCard->designationPiece);
-      		printf("%s ", (char *) tmpCard->nameWorkshopSupplier);
-      		printf("%d ", (int) tmpCard->numOrder);
+      		printf("Card %d\t-->\t", i+1);
+      		print_Cardstar(tmpCard);
       	}
       	list_next (l);
-      	printf ("\n");
    	}
+	printf("\n");
 }
 
 
