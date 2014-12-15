@@ -9,7 +9,7 @@
 #include <string.h>
 #include "List.h"
 
-
+#define nbDiffentCard 4 
 #define nbMiddleStep 1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1

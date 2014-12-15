@@ -3,7 +3,7 @@
 
 #include "Structures.h"
 
-void initListPossibleCard();
+void initListPossibleCard(char**,char**,char**,char**, int*);
 Workshop* initMiddleStep(Workshop*, int);
 
 BAL initBAL();

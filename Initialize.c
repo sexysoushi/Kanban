@@ -1,18 +1,10 @@
 #include "Initialize.h"
 
 
-void initListPossibleCard()
+void initListPossibleCard(char** cardWorkshopName, char** cardRefPiece, char** cardDesignationPiece, char** cardNameWorkshopSupplier, int* cardNumOrder)
 {
-	int nbDiffentCard = 4;
 	int i;
 	Card *newCard[nbDiffentCard];
-	referenceListCard = list_new();
-	
-	char cardWorkshopName[][15] = {"Supplier1", "Workshop1", "Workshop2", "FinalStep1"};
-	char cardRefPiece[][6] = {"S1P1", "W1P1", "W2P1", "L1P1"};
-	char cardDesignationPiece[][6] = {"Part1", "Part2", "Part3", "Part4"};
-	char cardNameWorkshopSupplier[][15] = {"none", "Supplier1", "Workshop1", "Workshop2"};
-	int cardNumOrder[4] = {0, 1, 2, 3};
 	
 	printf("Global initilization of the global list of possible <Card> :\n");
 	

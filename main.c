@@ -23,6 +23,11 @@ int main(int argc, char* argv[])
 {
 	int i;
 	int *tabNumber;
+	char* cardWorkshopName[15] = {"Supplier1", "Workshop1", "Workshop2", "FinalStep1"};
+	char* cardRefPiece[6] = {"S1P1", "W1P1", "W2P1", "L1P1"};
+	char* cardDesignationPiece[6] = {"Part1", "Part2", "Part3", "Part4"};
+	char* cardNameWorkshopSupplier[15] = {"none", "Supplier1", "Workshop1", "Workshop2"};
+	int cardNumOrder[4] = {0, 1, 2, 3};
 	
 	/* Initializations */
 	/* Tab for workshop's number */
@@ -44,7 +49,8 @@ int main(int argc, char* argv[])
 	printf("\n");
 
 	/* Declaration of the reference card for each workshop */
-	initListPossibleCard();
+	referenceListCard = list_new();
+	initListPossibleCard(cardWorkshopName, cardRefPiece, cardDesignationPiece, cardNameWorkshopSupplier, cardNumOrder);
 
 	list_print_Card(referenceListCard);
 	
@@ -53,6 +59,8 @@ int main(int argc, char* argv[])
 	scanf("%d", &nbProductsWanted);
 	printf("Preparation of the order in progress (%d products) ...\n", nbProductsWanted);
 
+	list_print_Card(referenceListCard);	
+	
 	/*Threads creation workshop*/
 	if(pthread_create(&t1, NULL, Launching_board_thread_fct, 0)!=0)
 		{error("Error Launching_board_thread creation\n"); exit(-1);}
