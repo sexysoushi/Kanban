@@ -141,6 +141,8 @@ void* Final_Product_thread_fct(void* arg)
 	Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
 	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
 	
+	//Container* tmpContainer;
+
 	//finalProduct = initFinalProduct(finalProduct, "Final Product", *numberThread, container);	
 
 	//
@@ -152,14 +154,25 @@ void* Final_Product_thread_fct(void* arg)
 		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
 
 		//prend un container du stock si actualcontainer = 0;	
-		if(Workshop.actualUsedContainer)
+		if(finalProduct->actualUsedContainer.nbPieces == 0)
 		{
-			
-
-
+			list_first(stock.listContainer);
+			tmpContainer = (Container*) list_data(stock.listContainer);
+			actualUsedContainer = *tmpContainer;
+			list_removeFirst(stock.listContainer);
 		}
-		//prend la/les piece(s) dont il a besoin
-		//vide son container => envoi la carte qu'il a reçu à la boite au lettre du workshop du dessus
+
+		// ici prendre une piece dans le container
+		finalProduct->actualUsedContainer.nbPieces--;
+
+		//si une piece a ete prise dans le container
+		if(finalProduct->actualUsedContainer.nbPieces == nbPieceByContainer-1)
+		{
+			// Mettre carte dans la boite aux lettres
+			//ajoute la carte dans sa boite au lettre
+			list_insert(finalProduct->actualUsedContainer.magneticCard, finalProduct->bal.listCard);
+			
+		}	
 		
 		usleep(200);
 		printf("1 Piece finale produite");
