@@ -17,7 +17,7 @@
 
 
 #define nbDiffentCard 6
-#define nbMiddleStep 1
+#define nbMiddleStep 4
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
 #define nbPieceByContainer 2

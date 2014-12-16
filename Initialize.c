@@ -84,6 +84,14 @@ Card initCard()
 	return cd;
 }
 
+Container initContainerWorkshop()
+{
+	Container cont;
+	cont.nbPieces = 0;
+	cont.magneticCard = initCard();
+	return cont;
+}
+
 
 Container initContainer()
 {
@@ -101,8 +109,7 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, Container **container)
 	ws->name = concatStringInt(s, number);;
 	ws->stock = initStock();
 	ws->bal = initBAL();
-	ws->actualUsedContainer = initContainer();
-	//ws->refCard = initCard();
+	ws->actualUsedContainer = initContainerWorkshop();
 	
 	/* Protection by mutex because of referenceListCard multiple access */
 	pthread_mutex_lock(&initCardRef);
@@ -111,6 +118,8 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, Container **container)
 	
 	/* Assignement workshop refCard */
 	ws->refCard = *tmpCard1;
+	
+	//print_Cardstar(tmpCard1);
 	
 	/*for(i=0; i<nbContainerByStock; i++)
 	{

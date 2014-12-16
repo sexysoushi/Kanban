@@ -15,6 +15,7 @@ BAL initBAL();
 Stock initStock();
 Card initCard();
 Container initContainer();
+Container initContainerWorkshop();
 Workshop* initWorkshop(Workshop*, char*, int, Container**);
 LB initLB();
 
