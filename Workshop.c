@@ -25,7 +25,7 @@ void* Postman_thread_fct(void* arg)
 	
 	/*while(1)
 	{
-		pthread_mutex_lock(&mutexTab[1]); 	  		// P
+		pthread_mutex_lock(&mutexTab[1]); 	  		
 
 		//check toutes les BAL
 		//recup_cm = getLastElementData(BALlistCard);
@@ -34,7 +34,7 @@ void* Postman_thread_fct(void* arg)
 		//ajoute à sa liste toutes les cartes magnetiques
 		//list_insertHead(Postman_listCard, recup_cm);
 
-		pthread_mutex_unlock(&mutexTab[1]); 	  		// V 
+		pthread_mutex_unlock(&mutexTab[1]); 	  		
 	}*/
 	//envoi ça liste au Tableau de lancement
 	pthread_cond_signal(&condTab[1]);	
@@ -54,7 +54,7 @@ void* Launching_board_thread_fct(void* arg)
 	//check la liste envoyée par l'homme flux
 	while(1)
 	{
-		pthread_mutex_lock(&mutexTab[2]); 	  		// P 
+
 		while(Postman_listCard != NULL)
 		{
 			//check toutes les cartes de l'homme flux
@@ -71,10 +71,7 @@ void* Launching_board_thread_fct(void* arg)
 		//tmp_card = (Card*) recup_tmp;
 		//tmp_card->ref_piece;
 		//fin while
-		pthread_mutex_unlock(&mutexTab[2]); 	  		// V 
 	}
-	// On ordonne au fournisseur de reaprovisionner le poste de la carte
-	pthread_cond_signal(&condTab[2]);
 	*/
 }
 
@@ -90,7 +87,9 @@ void* Supplier_Step_thread_fct(void* arg)
 	
 	/*while(1)
 	{
-		pthread_mutex_lock(&mutexTab[0]); 	  		// P 
+		//reveil du fournisseur par le tableau de lancement
+		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
+
 		
 		// Wait for a fabrication order
 		pthread_cond_wait(&condTab[2], &mutexTab[2]);	
@@ -104,7 +103,6 @@ void* Supplier_Step_thread_fct(void* arg)
 		
 		printf("Supplier : Container ready\n");
 		
-		pthread_mutex_unlock(&mutexTab[0]); 		// V 
 		
 		printf("test \n");
 	}
@@ -119,14 +117,15 @@ void* Middle_Step_thread_fct(void* arg)
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
 	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
 	
-	
-	//workshop = initMiddleStep(workshop, *numberThread);
 	workshop = initWorkshop(workshop, "Workshop", *numberThread, container);
 	
 	printf("toto\n");
 	/*
 	while(1)
 	{
+		//reveil du workshop par le tableau de lancement
+		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
+
 		// num des conditions, mutex = numberThread +1
 	}
 	*/
@@ -137,14 +136,38 @@ void* Middle_Step_thread_fct(void* arg)
 
 void* Final_Product_thread_fct(void* arg)
 {
-	int* lastNumber = (int*) arg;
-		
+	int* lastNumber = (int*) arg; //?
+	int* numberThread = (int*) arg;
+	Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
+	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
+	
+	//finalProduct = initFinalProduct(finalProduct, "Final Product", *numberThread, container);	
+
+	//
+
 	/*
 	while(1)
 	{
+		//reveil du producteur final par le tableau de lancement
+		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
+
+		//prend un container du stock si actualcontainer = 0;	
+		if(Workshop.actualUsedContainer)
+		{
+			
+
+
+		}
+		//prend la/les piece(s) dont il a besoin
+		//vide son container => envoi la carte qu'il a reçu à la boite au lettre du workshop du dessus
+		
+		usleep(200);
+		printf("1 Piece finale produite");
+		nbPieceDemand++;
+
+
+	}*/
 	
-	}
-	*/
 	pthread_exit(NULL);
 }
 
