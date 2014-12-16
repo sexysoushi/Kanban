@@ -9,13 +9,13 @@
 #include "Structures.h"
 
 void initListPossibleCard(char**,char**,char**,char**, int*);
-Workshop* initMiddleStep(Workshop*, int);
+//Workshop* initMiddleStep(Workshop*, int);
 
 BAL initBAL();
 Stock initStock();
 Card initCard();
 Container initContainer();
-Workshop* initWorkshop(Workshop*, char*, int);
+Workshop* initWorkshop(Workshop*, char*, int, Container**);
 LB initLB();
 
 char* concatStringInt(char*, int);
