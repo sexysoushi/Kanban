@@ -117,9 +117,11 @@ void* Middle_Step_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
+	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
 	
-	workshop = initMiddleStep(workshop, *numberThread);
 	
+	//workshop = initMiddleStep(workshop, *numberThread);
+	workshop = initWorkshop(workshop, "Workshop", *numberThread, container);
 	
 	printf("toto\n");
 	/*

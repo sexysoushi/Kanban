@@ -6,6 +6,7 @@
 #ifndef STRUCTURES_H
 #define	STRUCTURES_H
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -20,6 +21,7 @@
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
 #define nbPieceByContainer 2
+#define nbContainerByStock 2
 
 
 /* Global variables */
@@ -79,7 +81,7 @@ typedef struct {
 }LB; //Launching Board
 
 
-/*Functions implemented before the main */
+/*Functions implemented at the beginning of the main file */
 void applicateWhenSIGINT(int);
 void error(const char*);
 

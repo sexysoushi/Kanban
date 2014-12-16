@@ -29,19 +29,12 @@ void initListPossibleCard(char** cardWorkshopName, char** cardRefPiece, char** c
 
 
 
-Workshop* initMiddleStep(Workshop *W, int num)
+/*Workshop* initMiddleStep(Workshop *W, int num)
 {
 	W = initWorkshop(W, "Workshop", num);
 	
-	/* Protection by mutex because of referenceListCard multiple access */
-	pthread_mutex_lock(&initCardRef);
-	Card* tmpCard = (Card*) list_seek_voidstar(W->name, referenceListCard);
-	pthread_mutex_unlock(&initCardRef);
-	
-	W->refCard = *tmpCard;
-	
 	return W;
-}
+}*/
 
 
 /* Return the string "s" with number "nb" at the end */
@@ -73,7 +66,7 @@ BAL initBAL()
 Stock initStock()
 {
 	Stock st;
-	st.nbContainer = 0;
+	st.nbContainer = nbContainerByStock;
 	st.listContainer = list_new();
 	return st;
 }
@@ -95,18 +88,36 @@ Card initCard()
 Container initContainer()
 {
 	Container cont;
-	cont.nbPieces = 0;
+	cont.nbPieces = nbPieceByContainer;
 	cont.magneticCard = initCard();
 	return cont;
 }
 
-Workshop* initWorkshop(Workshop* ws, char* s, int number)
+Workshop* initWorkshop(Workshop* ws, char* s, int number, Container **container)
 {
+	int i;
+	Container *newContainer[nbContainerByStock];
+	
 	ws->name = concatStringInt(s, number);;
 	ws->stock = initStock();
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainer();
-	ws->refCard = initCard();
+	//ws->refCard = initCard();
+	
+	/* Protection by mutex because of referenceListCard multiple access */
+	pthread_mutex_lock(&initCardRef);
+	Card* tmpCard1 = (Card*) list_seek_voidstar(ws->name, referenceListCard);
+	pthread_mutex_unlock(&initCardRef);
+	
+	/* Assignement workshop refCard */
+	ws->refCard = *tmpCard1;
+	
+	/*for(i=0; i<nbContainerByStock; i++)
+	{
+		newContainer[i] = initContainer();
+		//list_insert(ws->stock.listContainer, *container[i]);
+	} */
+	
 	return ws;
 }
 
