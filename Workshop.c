@@ -87,24 +87,23 @@ void* Supplier_Step_thread_fct(void* arg)
 	
 	/*while(1)
 	{
-		//reveil du fournisseur par le tableau de lancement
+		//reveil du supplier par le tableau de lancement
 		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
-
 		
-		// Wait for a fabrication order
-		pthread_cond_wait(&condTab[2], &mutexTab[2]);	
-
-		// Create new product
-		for(i=0; i<nbPieceByContainer; i++)
+		//met les pieces fabriquées dans un container destiné au poste en aval
+		while(supplier->containerToSend.nbPieces != nbPieceByContainer)
 		{
-			sleep(5);
-			printf("Supplier : One piece created\n");
+			//fabrication piece
+			usleep(200);
+			supplier->containerToSend.nbPieces++;
 		}
-		
-		printf("Supplier : Container ready\n");
-		
-		
-		printf("test \n");
+
+		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
+		if(supplier->containerToSend.nbPieces == nbPieceByContainer)
+		{
+			list_insert(supplier->containerToSend, workshopEnAval->stock.listContainer);
+		}
+
 	}
 	*/
 	pthread_exit(NULL);
@@ -116,17 +115,59 @@ void* Middle_Step_thread_fct(void* arg)
 	int* numberThread = (int*) arg;
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
 	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
-	
+	//Container* tmpContainer;
 	workshop = initWorkshop(workshop, "Workshop", *numberThread, container);
 	
 	printf("toto\n");
+
+
 	/*
 	while(1)
 	{
 		//reveil du workshop par le tableau de lancement
 		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
 
-		// num des conditions, mutex = numberThread +1
+		//prend un container du stock si actualcontainer = 0;	
+		if(workshop->actualUsedContainer.nbPieces == 0)
+		{
+			list_first(stock.listContainer);
+			tmpContainer = (Container*) list_data(stock.listContainer);
+			actualUsedContainer = *tmpContainer;
+			list_removeFirst(stock.listContainer);
+		}
+		
+		//consomme le container
+		workshop->actualUsedContainer.nbPieces--;
+
+		//si une piece a ete prise dans le container
+		if(workshop->actualUsedContainer.nbPieces == nbPieceByContainer-1)
+		{
+			// Mettre carte dans la boite aux lettres
+			list_insert(workshop->actualUsedContainer.magneticCard, workshop->bal.listCard);
+			
+		}
+
+		
+		//met les pieces fabriquées dans un container destiné au poste en aval
+		while(workshop->containerToSend.nbPieces != nbPieceByContainer)
+		{
+			//fabrication piece
+			usleep(200);
+			workshop->containerToSend.nbPieces++;
+		}
+
+		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
+		if(workshop->containerToSend.nbPieces == nbPieceByContainer)
+		{
+			list_insert(workshop->containerToSend, workshopEnAval->stock.listContainer);
+		}
+
+		//Envoi du container vide au poste en amont !
+		if(workshop->actualUsedContainer.nbPieces == 0)
+		{
+			list_insert(workshop->actualUsedContainer, workshopEnAmont->stock.listContainer);
+		}
+		
 	}
 	*/
 	
@@ -144,8 +185,6 @@ void* Final_Product_thread_fct(void* arg)
 	//Container* tmpContainer;
 
 	//finalProduct = initFinalProduct(finalProduct, "Final Product", *numberThread, container);	
-
-	//
 
 	/*
 	while(1)
@@ -169,12 +208,17 @@ void* Final_Product_thread_fct(void* arg)
 		if(finalProduct->actualUsedContainer.nbPieces == nbPieceByContainer-1)
 		{
 			// Mettre carte dans la boite aux lettres
-			//ajoute la carte dans sa boite au lettre
 			list_insert(finalProduct->actualUsedContainer.magneticCard, finalProduct->bal.listCard);
 			
 		}	
-		
+		//fabrication de la piece
 		usleep(200);
+
+		//Envoi du container vide au poste en amont !
+		if(finalProduct->actualUsedContainer.nbPieces == 0)
+		{
+			list_insert(finalProduct->actualUsedContainer, workshopEnAmont->stock.listContainer);
+		}
 		printf("1 Piece finale produite");
 		nbPieceDemand++;
 
