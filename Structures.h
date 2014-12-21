@@ -86,3 +86,4 @@ void applicateWhenSIGINT(int);
 void error(const char*);
 
 #endif 	/* STRUCTURES_H */
+
