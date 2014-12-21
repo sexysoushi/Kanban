@@ -12,11 +12,11 @@ void initListPossibleCard(char**,char**,char**,char**, int*);
 //Workshop* initMiddleStep(Workshop*, int);
 
 BAL initBAL();
-Stock initStock();
+Stock initStock(Card);
 Card initCard();
-Container initContainer();
+Container* initContainer(Card);
 Container initContainerWorkshop();
-Workshop* initWorkshop(Workshop*, char*, int, Container**);
+Workshop* initWorkshop(Workshop*, char*, int);
 LB initLB();
 
 char* concatStringInt(char*, int);

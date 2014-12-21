@@ -26,3 +26,10 @@ void print_Card(Card c)
 	printf("%s\t\t", c.nameWorkshopSupplier);
 	printf("%d\n", c.numOrder);
 }
+
+void print_Workshopstar(Workshop* w)
+{
+	printf("%s\t\t", (char *) w->name);
+	printf("%d\t\t", (int) w->stock.nbContainer);
+	printf("%s\t\n", (char *) w->refCard.refPiece);
+}

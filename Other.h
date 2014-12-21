@@ -11,4 +11,6 @@
 void print_Cardstar(Card*);
 void print_Card(Card);
 
+void print_Workshopstar(Workshop*);
+
 #endif /* OTHER_H */

@@ -63,11 +63,21 @@ BAL initBAL()
 }
 
 
-Stock initStock()
+Stock initStock(Card c)
 {
 	Stock st;
+	int i;
+	Container* tmpContainer;
+	
 	st.nbContainer = nbContainerByStock;
 	st.listContainer = list_new();
+	
+	for(i=0; i<st.nbContainer; i++)
+	{
+		tmpContainer = initContainer(c);
+		list_insert(st.listContainer, tmpContainer);
+	}
+	
 	return st;
 }
 
@@ -93,39 +103,33 @@ Container initContainerWorkshop()
 }
 
 
-Container initContainer()
+Container* initContainer(Card c)
 {
-	Container cont;
-	cont.nbPieces = nbPieceByContainer;
-	cont.magneticCard = initCard();
+	Container* cont = (Container*) malloc(sizeof(Container));
+	cont->nbPieces = nbPieceByContainer;
+	cont->magneticCard = c;
 	return cont;
 }
 
-Workshop* initWorkshop(Workshop* ws, char* s, int number, Container **container)
+Workshop* initWorkshop(Workshop* ws, char* s, int number)
 {
 	int i;
-	Container *newContainer[nbContainerByStock];
+	Card* tmpCard;
 	
 	ws->name = concatStringInt(s, number);;
-	ws->stock = initStock();
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainerWorkshop();
 	
 	/* Protection by mutex because of referenceListCard multiple access */
 	pthread_mutex_lock(&initCardRef);
-	Card* tmpCard1 = (Card*) list_seek_voidstar(ws->name, referenceListCard);
+	tmpCard = (Card*) list_seek_voidstar(ws->name, referenceListCard);
 	pthread_mutex_unlock(&initCardRef);
 	
 	/* Assignement workshop refCard */
-	ws->refCard = *tmpCard1;
+	ws->refCard = *tmpCard;
 	
-	//print_Cardstar(tmpCard1);
-	
-	/*for(i=0; i<nbContainerByStock; i++)
-	{
-		newContainer[i] = initContainer();
-		//list_insert(ws->stock.listContainer, *container[i]);
-	} */
+	/*Stock initilization*/
+	ws->stock = initStock(ws->refCard);
 	
 	return ws;
 }

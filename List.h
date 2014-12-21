@@ -34,6 +34,7 @@ void* list_seek_voidstar(char*, list*);
 
 void list_print_char (list *);
 void list_print_Card (list *);
+void list_print_Workshop (list *);
 
 #endif /* LIST_H */
 

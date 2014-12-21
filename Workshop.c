@@ -114,11 +114,13 @@ void* Middle_Step_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
-	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
-	//Container* tmpContainer;
-	workshop = initWorkshop(workshop, "Workshop", *numberThread, container);
+	//Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
+	workshop = initWorkshop(workshop, "Workshop", *numberThread);
 	
-	printf("toto\n");
+	list_insert(workshopList, workshop);
+	
+	sleep(2+*numberThread);	
+	print_Workshopstar(workshop);
 
 
 	/*
@@ -170,10 +172,9 @@ void* Middle_Step_thread_fct(void* arg)
 		
 	}
 	*/
-	free(&(workshop->bal.listCard));
-	free(&(workshop->stock.listContainer));
-	free(workshop);
-	free(container);
+	
+	//free(workshop);
+	//free(container);
 	
 	pthread_exit(NULL);
 }
@@ -228,10 +229,9 @@ void* Final_Product_thread_fct(void* arg)
 
 
 	}*/
-	free(&(finalProduct->bal.listCard));
-	free(&(finalProduct->stock.listContainer));
-	free(finalProduct);
-	free(container);
+	
+	//free(finalProduct);
+	//free(container);
 	
 	pthread_exit(NULL);
 }

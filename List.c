@@ -233,3 +233,27 @@ void list_print_Card (list * l)
 }
 
 
+void list_print_Workshop (list * l)
+{
+	int i;
+   	int size = l->nbElem;
+   	Workshop *tmpWorkshop;
+
+   	list_first (l);
+   	
+   	for (i = 0; i<size; i++)
+	{
+		tmpWorkshop = (Workshop*) list_data (l);
+      	if (list_data (l) != NULL)
+      	{
+      		printf("Workshop %d\t\t-->\t\t", i+1);
+      		print_Workshopstar(tmpWorkshop);
+      	}
+      	list_next (l);
+   	}
+	printf("\n");
+}
+
+
+
+

@@ -22,7 +22,7 @@ void applicateWhenSIGINT(int s)
 
 int main(int argc, char* argv[])
 {
-	//if elemSize doesn't increase when nbMiddleStep increase, there are some problems when we call list_print_Card() 
+	//if elemSize doesn't increase when nbMiddleStep increase, there are some problems when list_print_Card() is called 
 	int elemSize = nbMiddleStep;
 	int i;  
 	int *tabNumber;
@@ -66,12 +66,15 @@ int main(int argc, char* argv[])
 	
 	/* Tab for workshop's number */
 	tabNumber = (int*) malloc(nbMiddleStep * sizeof(int));
+	
 	for(i=1; i<nbMiddleStep+1; i++)
 		tabNumber[i-1] = i;
 	
 	/* Mutex */
 	for(i=0; i<nbMutex; i++)
 		pthread_mutex_init(&mutexTab[i], NULL);
+	pthread_mutex_init(&initCardRef, NULL);
+	pthread_mutex_init(&accessWorkshopList, NULL);
 	
 	/* Conditions */
 	for(i=0; i<nbCond; i++)	
@@ -87,6 +90,8 @@ int main(int argc, char* argv[])
 	initListPossibleCard(cardWorkshopName, cardRefPiece, cardDesignationPiece, cardNameWorkshopSupplier, cardNumOrder);
 
 	list_print_Card(referenceListCard);
+	
+	workshopList = list_new();
 	
 	/* Client's choice */
 	printf("How many products do you want ?\n");
@@ -117,8 +122,13 @@ int main(int argc, char* argv[])
 	for(i=0; i<nbMiddleStep; i++)
 		pthread_join(threadTab[i],NULL); 
 		
+	printf("\n all Join reached \n");
+	list_print_Workshop(workshopList);
+	
 	list_delete(&referenceListCard);
-
+	list_delete(&workshopList);
+	
+	//free(cardWorkshopName);
 	//free(cardRefPiece);
 	//free(cardDesignationPiece);
 	//free(cardNameWorkshopSupplier);
