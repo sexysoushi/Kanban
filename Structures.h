@@ -16,8 +16,8 @@
 #include "List.h"
 
 
-#define nbDiffentCard 6
-#define nbMiddleStep 4
+#define nbMiddleStep 10
+#define nbDiffentCard nbMiddleStep+1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
 #define nbPieceByContainer 2

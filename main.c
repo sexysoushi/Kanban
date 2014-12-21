@@ -1,7 +1,7 @@
 /* Application of the Kanban's method
  * 
  * Authors : Renaud Guillaume - Schiavi Barbara
- * Last modification : December 15, 2014
+ * Last modification : December 21, 2014
  */
 
 #include "Initialize.h"
@@ -22,15 +22,48 @@ void applicateWhenSIGINT(int s)
 
 int main(int argc, char* argv[])
 {
-	int i;
+	//if elemSize doesn't increase when nbMiddleStep increase, there are some problems when we call list_print_Card() 
+	int elemSize = nbMiddleStep;
+	int i;  
 	int *tabNumber;
-	char* cardWorkshopName[15] = {"Supplier1", "Workshop1", "Workshop2", "Workshop3", "Workshop4", "FinalStep1"};
-	char* cardRefPiece[6] = {"S1P1", "W1P1", "W2P1", "W3P1", "W4P1", "L1P1"};
-	char* cardDesignationPiece[6] = {"Part1", "Part2", "Part3", "Part4", "Part5", "Part6"};
-	char* cardNameWorkshopSupplier[15] = {"none", "Supplier1", "Workshop1", "Workshop2", "Workshop3", "Workshop4"};
 	int cardNumOrder[4] = {0, 1, 2, 3};
+	char **cardWorkshopName, **cardRefPiece, **cardDesignationPiece, **cardNameWorkshopSupplier;
+	char *elem_cardWorkshopName, *elem_cardRefPiece, *elem_cardDesignationPiece, *elem_cardNameWorkshopSupplier;
+	
 	
 	/* Initializations */
+	cardWorkshopName = (char **) malloc(elemSize * sizeof(char *));
+	cardRefPiece = (char **) malloc(elemSize * sizeof(char *));
+	cardDesignationPiece = (char **) malloc(elemSize * sizeof(char *));
+	cardNameWorkshopSupplier = (char **) malloc(elemSize * sizeof(char *));
+	
+	for(i=0; i<nbDiffentCard; i++)
+	{
+		if(i==0)
+		{
+			elem_cardWorkshopName = concatStringInt("Supplier", i+1);
+			elem_cardRefPiece = concatStringInt("S", i+1);
+			elem_cardNameWorkshopSupplier = "none";
+		}
+		else 
+		{
+			if(i==1)
+				elem_cardNameWorkshopSupplier = concatStringInt("Supplier", i); 
+			else
+				elem_cardNameWorkshopSupplier = concatStringInt("Workshop", i-1); 
+				
+			elem_cardWorkshopName = concatStringInt("Workshop", i);
+			elem_cardRefPiece = concatStringInt("W", i);
+		}
+		
+		elem_cardDesignationPiece = concatStringInt("Part", i+1);
+		
+		cardWorkshopName[i] = elem_cardWorkshopName;
+		cardRefPiece[i] = elem_cardRefPiece;
+		cardDesignationPiece[i] = elem_cardDesignationPiece;
+		cardNameWorkshopSupplier[i] = elem_cardNameWorkshopSupplier;
+	}		
+	
 	/* Tab for workshop's number */
 	tabNumber = (int*) malloc(nbMiddleStep * sizeof(int));
 	for(i=1; i<nbMiddleStep+1; i++)
@@ -80,10 +113,23 @@ int main(int argc, char* argv[])
 	pthread_join(t2,NULL);
 	pthread_join(t3,NULL);
 	pthread_join(t4,NULL);
-	for(i=0; i<(nbMiddleStep); i++)
+	
+	for(i=0; i<nbMiddleStep; i++)
 		pthread_join(threadTab[i],NULL); 
 		
 	list_delete(&referenceListCard);
+
+	//free(cardRefPiece);
+	//free(cardDesignationPiece);
+	//free(cardNameWorkshopSupplier);
+	free(tabNumber);
+	
+	pthread_mutex_destroy(&initCardRef);
+	for(i=0; i<nbMutex; i++)
+		pthread_mutex_destroy(&mutexTab[i]);
+		
+	for(i=0; i<nbCond; i++)
+		pthread_cond_destroy(&condTab[i]);
 	
 	/* pthread_exit(NULL); Destroy the main but not the threads in progress */
 	return 0;

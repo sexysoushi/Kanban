@@ -37,7 +37,7 @@ void* Postman_thread_fct(void* arg)
 		pthread_mutex_unlock(&mutexTab[1]); 	  		
 	}*/
 	//envoi ça liste au Tableau de lancement
-	pthread_cond_signal(&condTab[1]);	
+	//pthread_cond_signal(&condTab[1]);	
 	
 }
 
@@ -170,6 +170,10 @@ void* Middle_Step_thread_fct(void* arg)
 		
 	}
 	*/
+	free(&(workshop->bal.listCard));
+	free(&(workshop->stock.listContainer));
+	free(workshop);
+	free(container);
 	
 	pthread_exit(NULL);
 }
@@ -224,26 +228,12 @@ void* Final_Product_thread_fct(void* arg)
 
 
 	}*/
+	free(&(finalProduct->bal.listCard));
+	free(&(finalProduct->stock.listContainer));
+	free(finalProduct);
+	free(container);
 	
 	pthread_exit(NULL);
 }
 
 
-
-
-
-
-	//char *wsName, *txt;
-
-	/* Allocations */
-	//txt = (char*) malloc(5*sizeof(char));
-	
-	/*for(i=1; i<nbMiddleStep; i++)
-	{
-		//Workshop's name 
-		sprintf(txt, "ws");
-		sprintf(nbName, "%d", i);
-		wsName = strcat(txt, nbName);
-	}*/
-	
-	//list* testlist = list_new();

@@ -224,7 +224,7 @@ void list_print_Card (list * l)
 		tmpCard = (Card*) list_data (l);
       	if (list_data (l) != NULL)
       	{
-      		printf("Card %d\t-->\t", i+1);
+      		printf("Card %d\t\t-->\t\t", i+1);
       		print_Cardstar(tmpCard);
       	}
       	list_next (l);
