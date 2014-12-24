@@ -218,17 +218,24 @@ void* list_seekCardDesignation_voidstar(char* s, list* l)
 void list_print_char (list * l)
 {
    	int i;
-   	int size = l->nbElem;
-
-   	list_first (l);
-   	for (i = 0; i < size; i++)
+   	int size;
+   	
+   	if(l)
 	{
-      	if (list_data (l) != NULL)
-        	printf ("%s ", (char *) list_data (l));
-      	
-      	list_next (l);
-      	printf ("\n");
-   	}
+	   	size = l->nbElem;
+	   	list_first (l);
+	   	
+	   	for (i = 0; i < size; i++)
+		{
+		  	if (list_data (l) != NULL)
+		    	printf ("%s ", (char *) list_data (l));
+		  	
+		  	list_next (l);
+		  	printf ("\n");
+	   	}
+	}
+	else
+		printf("Empty list !\n");
 }
 
 
@@ -236,65 +243,83 @@ void list_print_char (list * l)
 void list_print_Card (list * l)
 {
 	int i;
-   	int size = l->nbElem;
+   	int size;
    	Card *tmpCard;
 
-   	list_first (l);
-   	
-   	for (i = 0; i < size; i++)
+	if(l)
 	{
-		tmpCard = (Card*) list_data (l);
-      	if (list_data (l) != NULL)
-      	{
-      		printf("Card %d\t\t-->\t\t", i+1);
-      		print_Cardstar(tmpCard);
-      	}
-      	list_next (l);
-   	}
-	printf("\n");
+		size = l->nbElem;
+	   	list_first (l);
+	   	
+	   	for (i = 0; i < size; i++)
+		{
+			tmpCard = (Card*) list_data (l);
+		  	if (list_data (l) != NULL)
+		  	{
+		  		printf("Card %d\t\t-->\t\t", i+1);
+		  		print_Cardstar(tmpCard);
+		  	}
+		  	list_next (l);
+	   	}
+		printf("\n");
+	}
+	else
+		printf("Empty list !\n");
 }
 
 
 void list_print_Workshop (list * l)
 {
 	int i;
-   	int size = l->nbElem;
+   	int size;
    	Workshop *tmpWorkshop;
 
-   	list_first (l);
-   	
-   	for (i = 0; i<size; i++)
+	if(l)
 	{
-		tmpWorkshop = (Workshop*) list_data (l);
-      	if (list_data (l) != NULL)
-      	{
-      		printf("Workshop %d\t\t-->\t\t", i+1);
-      		print_Workshopstar(tmpWorkshop);
-      	}
-      	list_next (l);
-   	}
-	printf("\n");
+		size = l->nbElem;;
+	   	list_first (l);
+	   	
+	   	for (i = 0; i<size; i++)
+		{
+			tmpWorkshop = (Workshop*) list_data (l);
+		  	if (list_data (l) != NULL)
+		  	{
+		  		printf("Workshop %d\t\t-->\t\t", i+1);
+		  		print_Workshopstar(tmpWorkshop);
+		  	}
+		  	list_next (l);
+	   	}
+		printf("\n");
+	}
+	else
+		printf("Empty list !\n");
 }
 
 void list_print_Container (list * l)
 {
 	int i;
-   	int size = l->nbElem;
+   	int size;
    	Container *tmpContainer;
 
-   	list_first (l);
-   	
-   	for (i = 0; i<size; i++)
+	if(l)
 	{
-		tmpContainer = (Container*) list_data (l);
-      	if (list_data (l) != NULL)
-      	{
-      		printf("Container %d\t\t-->\t\t", i+1);
-      		print_Containerstar(tmpContainer);
-      	}
-      	list_next (l);
-   	}
-	printf("\n");
+		size = l->nbElem;
+	   	list_first (l);
+	   	
+	   	for (i = 0; i<size; i++)
+		{
+			tmpContainer = (Container*) list_data (l);
+		  	if (list_data (l) != NULL)
+		  	{
+		  		printf("Container %d\t\t-->\t\t", i+1);
+		  		print_Containerstar(tmpContainer);
+		  	}
+		  	list_next (l);
+	   	}
+		printf("\n");
+	}
+	else
+		printf("Empty list !\n");	
 }
 
 

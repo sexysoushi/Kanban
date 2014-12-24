@@ -54,7 +54,18 @@ BAL initBAL()
 }
 
 
-Stock initStock(Card c)
+Stock initStock()
+{
+	Stock st;
+	
+	st.nbContainer = 0;
+	st.listContainer = NULL;
+	
+	return st;
+}
+
+
+Stock initStockCard(Card c)
 {
 	Stock st;
 	int i;
@@ -106,29 +117,75 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 {
 	int i;
 	Card* tmpCard;
+	Card stockCard;
 	char* tmpChar;
 	
 	ws->name = concatStringInt(s, number);;
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainerWorkshop();
 	
-	/* Put the good refCard in the stock's containers*/
-	if(boolMiddleStep == 0)
-		tmpChar = concatStringInt("Part", number);
-	else
-		tmpChar = concatStringInt("Part", nbMiddleStep+1);
-		
-	/* Protection by mutex because of referenceListCard multiple access */
+	// Protection by mutex because of referenceListCard multiple access 
 	pthread_mutex_lock(&initCardRef);
+	
+	/* find the good card for the stock */
+	// supplier & middle_step
+	if(boolMiddleStep <= 0)	
+	{
+		tmpCard = (Card*) list_seekName_voidstar(ws->name, referenceListCard);
+		/* Assignement workshop refCard */
+		ws->refCard = *tmpCard;	
+		
+		/*if(boolMiddleStep == 0)
+		{
+			tmpChar = concatStringInt("Part", number);
+		
+			// Put the good refCard in the stock's containers
+			tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
+			stockCard = *tmpCard;
+		
+			//Stock initilization
+			ws->stock = initStock(stockCard);
+		}*/
+		
+		// Just Supplier
+		if(boolMiddleStep < 0)
+			ws->stock = initStock();
+	}
+	// middle_step & finalProduct
+	if(boolMiddleStep >= 0)	
+	{
+		// Just Final Product
+		if(boolMiddleStep > 0)
+		{
+			//no reference Card
+			ws->refCard = initCard();
+		
+			tmpChar = concatStringInt("Part", nbMiddleStep+1);
+		}
+		// Just Middle_step
+		else
+			tmpChar = concatStringInt("Part", number);
+			
+		// Put the good refCard in the stock's containers
+		tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
+		stockCard = *tmpCard;
+		
+		//Stock initilization
+		ws->stock = initStockCard(stockCard);
+	}
+		
+	
+	/* Put the good refCard in the stock's containers
 	tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
+	stockCard = *tmpCard;
+	
+	// Assignement workshop refCard 
+	tmpCard = (Card*) list_seekName_voidstar(ws->name ,referenceListCard);
+	ws->refCard = *tmpCard;
+	*/
+	
 	pthread_mutex_unlock(&initCardRef);
 		
-	/* Assignement workshop refCard */
-	ws->refCard = *tmpCard;
-		
-	/*Stock initilization*/
-	ws->stock = initStock(ws->refCard);
-	
 	return ws;
 }
 

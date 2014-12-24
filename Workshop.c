@@ -78,12 +78,23 @@ void* Launching_board_thread_fct(void* arg)
 
 void* Supplier_Step_thread_fct(void* arg)
 { 	
-	int* nb = (int*) arg;
-	int i;
-	//Workshop *supplier = (Workshop*) malloc(sizeof(Workshop));
+	int* numberThread = (int*) arg;
+	Workshop *supplier = (Workshop*) malloc(sizeof(Workshop));
+
+	supplier = initWorkshop(supplier, "Supplier", *numberThread, -1);	
+	list_insert(workshopList, supplier);
 	
-	//supplier = initWorkshop("Supplier", *nb);
+	sleep(2);	
+	print_Card(supplier->refCard);
+	print_Workshopstar(supplier);
+	list_print_Container(supplier->stock.listContainer);
 	
+	while(1)
+	{
+		printf("===> entree stop %d\n",	0);
+		break;
+	}
+	printf("<=== sortie %d\n", 0);
 	
 	/*while(1)
 	{
@@ -119,8 +130,8 @@ void* Middle_Step_thread_fct(void* arg)
 	list_insert(workshopList, workshop);
 	
 	sleep(2+*numberThread);	
+	print_Card(workshop->refCard);
 	print_Workshopstar(workshop);
-	
 	list_print_Container(workshop->stock.listContainer);
 	
 	while(1)
@@ -193,9 +204,18 @@ void* Final_Product_thread_fct(void* arg)
 	finalProduct = initWorkshop(finalProduct, "Final_product", *numberThread, 1);	
 	list_insert(workshopList, finalProduct);
 	
+	sleep(2+nbMiddleStep+1);	
+	print_Card(finalProduct->refCard);
 	print_Workshopstar(finalProduct);
-	
-	//finalProduct = initFinalProduct(finalProduct, "Final Product", *numberThread, container);	
+	list_print_Container(finalProduct->stock.listContainer);
+
+	while(1)
+	{
+		printf("===> entree stop %d\n", nbMiddleStep+1);
+		sleep((nbMiddleStep+1)/2);
+		break;
+	}
+	printf("<=== sortie %d\n", nbMiddleStep+1);
 
 	/*
 	while(1)
@@ -236,6 +256,8 @@ void* Final_Product_thread_fct(void* arg)
 
 	}*/
 	
+	list_delete(&(finalProduct->stock.listContainer));
+	//list_delete(&(workshop->bal.listCard));
 	free(finalProduct);
 	
 	pthread_exit(NULL);

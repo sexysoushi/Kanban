@@ -12,7 +12,8 @@ void initListPossibleCard(char**,char**,char**,char**, int*);
 //Workshop* initMiddleStep(Workshop*, int);
 
 BAL initBAL();
-Stock initStock(Card);
+Stock initStockCard(Card);
+Stock initStock();
 Card initCard();
 Container* initContainer(Card);
 Container initContainerWorkshop();
@@ -22,3 +23,8 @@ LB initLB();
 char* concatStringInt(char*, int);
 
 #endif /* INITIALIZE_H */
+
+
+
+
+	
