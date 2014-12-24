@@ -16,7 +16,7 @@
 #include "List.h"
 
 
-#define nbMiddleStep 3		// at least 1
+#define nbMiddleStep 20		// at least 1
 #define nbDiffentCard nbMiddleStep+1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
@@ -25,7 +25,7 @@
 
 
 /* Global variables */
-pthread_t t1, t2, t3, t4;	// 4 threads which are indispensable
+pthread_t t1, t2, t3, t4;	// 4 indispensable threads 
 pthread_t threadTab[nbMiddleStep]; 	// Threads for dynamic number of workshop
 
 pthread_mutex_t initCardRef;

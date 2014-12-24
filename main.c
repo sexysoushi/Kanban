@@ -1,7 +1,7 @@
 /* Application of the Kanban's method
  * 
  * Authors : Renaud Guillaume - Schiavi Barbara
- * Last modification : December 21, 2014
+ * Last modification : December 24, 2014
  */
 
 #include "Initialize.h"

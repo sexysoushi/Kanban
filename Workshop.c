@@ -5,23 +5,12 @@
 
 #include "Workshop.h"
 
-/* fonctions à utiliser
-	int pthread_mutex_init(&mutexTab[NbMutex]);
-	int pthread_mutex_cond(&condTab[NbCond], &mutexTab[NbMutex]);
-	int pthread_mutex_lock(&mutexTab[NbMutex]);
-	int pthread_mutex_unlock(&mutexTab[NbMutex]);
-void list_insertHead(list*, void*);	/* Insert an element at the top of the list 
-void* getLastElementData(list*);	/* return the last element's data 
-void list_RemoveLastElem (list*);	/* Remove the last element of the list 
-*/
-
-
 /*
 Un homme flux récupère régulièrement les cartes aux différents postes de montage et les apporte à l’atelier en amont.
 */
 void* Postman_thread_fct(void* arg)
 {
-	void* recup_cm; //carte magnetique
+	postmanListCard = list_new();
 	
 	/*while(1)
 	{
@@ -39,6 +28,7 @@ void* Postman_thread_fct(void* arg)
 	//envoi ça liste au Tableau de lancement
 	//pthread_cond_signal(&condTab[1]);	
 	
+	//list_delete(&postmanListCard);
 }
 
 

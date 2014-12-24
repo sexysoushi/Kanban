@@ -134,19 +134,7 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 		tmpCard = (Card*) list_seekName_voidstar(ws->name, referenceListCard);
 		/* Assignement workshop refCard */
 		ws->refCard = *tmpCard;	
-		
-		/*if(boolMiddleStep == 0)
-		{
-			tmpChar = concatStringInt("Part", number);
-		
-			// Put the good refCard in the stock's containers
-			tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
-			stockCard = *tmpCard;
-		
-			//Stock initilization
-			ws->stock = initStock(stockCard);
-		}*/
-		
+
 		// Just Supplier
 		if(boolMiddleStep < 0)
 			ws->stock = initStock();
