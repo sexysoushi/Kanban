@@ -28,15 +28,6 @@ void initListPossibleCard(char** cardWorkshopName, char** cardRefPiece, char** c
 }
 
 
-
-/*Workshop* initMiddleStep(Workshop *W, int num)
-{
-	W = initWorkshop(W, "Workshop", num);
-	
-	return W;
-}*/
-
-
 /* Return the string "s" with number "nb" at the end */
 char* concatStringInt(char* s, int nb)
 {
@@ -111,23 +102,30 @@ Container* initContainer(Card c)
 	return cont;
 }
 
-Workshop* initWorkshop(Workshop* ws, char* s, int number)
+Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 {
 	int i;
 	Card* tmpCard;
+	char* tmpChar;
 	
 	ws->name = concatStringInt(s, number);;
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainerWorkshop();
 	
+	/* Put the good refCard in the stock's containers*/
+	if(boolMiddleStep == 0)
+		tmpChar = concatStringInt("Part", number);
+	else
+		tmpChar = concatStringInt("Part", nbMiddleStep+1);
+		
 	/* Protection by mutex because of referenceListCard multiple access */
 	pthread_mutex_lock(&initCardRef);
-	tmpCard = (Card*) list_seek_voidstar(ws->name, referenceListCard);
+	tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
 	pthread_mutex_unlock(&initCardRef);
-	
+		
 	/* Assignement workshop refCard */
 	ws->refCard = *tmpCard;
-	
+		
 	/*Stock initilization*/
 	ws->stock = initStock(ws->refCard);
 	

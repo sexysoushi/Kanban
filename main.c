@@ -8,14 +8,12 @@
 #include "Structures.h"
 #include "Workshop.h"
 
-
 /* Function used to post the error messages */
 void error(const char* msg) { perror(msg); exit(-1); }
 
 /* Function used as the mask of the signal SIGINT */
 void applicateWhenSIGINT(int s) 
-{
-	list_delete(&referenceListCard);
+{	
 	error("\nProblem : received stop signal !\n"); 
 }
 
@@ -29,7 +27,6 @@ int main(int argc, char* argv[])
 	int cardNumOrder[4] = {0, 1, 2, 3};
 	char **cardWorkshopName, **cardRefPiece, **cardDesignationPiece, **cardNameWorkshopSupplier;
 	char *elem_cardWorkshopName, *elem_cardRefPiece, *elem_cardDesignationPiece, *elem_cardNameWorkshopSupplier;
-	
 	
 	/* Initializations */
 	cardWorkshopName = (char **) malloc(elemSize * sizeof(char *));
@@ -74,7 +71,7 @@ int main(int argc, char* argv[])
 	for(i=0; i<nbMutex; i++)
 		pthread_mutex_init(&mutexTab[i], NULL);
 	pthread_mutex_init(&initCardRef, NULL);
-	pthread_mutex_init(&accessWorkshopList, NULL);
+	pthread_mutex_init(&stopMutex, NULL);
 	
 	/* Conditions */
 	for(i=0; i<nbCond; i++)	
@@ -123,7 +120,6 @@ int main(int argc, char* argv[])
 		pthread_join(threadTab[i],NULL); 
 		
 	printf("\n all Join reached \n");
-	list_print_Workshop(workshopList);
 	
 	list_delete(&referenceListCard);
 	list_delete(&workshopList);
@@ -135,13 +131,13 @@ int main(int argc, char* argv[])
 	free(tabNumber);
 	
 	pthread_mutex_destroy(&initCardRef);
+	pthread_mutex_destroy(&stopMutex);
 	for(i=0; i<nbMutex; i++)
 		pthread_mutex_destroy(&mutexTab[i]);
 		
 	for(i=0; i<nbCond; i++)
 		pthread_cond_destroy(&condTab[i]);
-	
-	/* pthread_exit(NULL); Destroy the main but not the threads in progress */
+
 	return 0;
 }
 

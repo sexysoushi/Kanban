@@ -6,6 +6,7 @@
 #include "Other.h"
 #include "Structures.h"
 
+
 void print_Cardstar(Card* c)
 {
 	printf("%s\t\t", (char *) c->workshopName);
@@ -30,6 +31,23 @@ void print_Card(Card c)
 void print_Workshopstar(Workshop* w)
 {
 	printf("%s\t\t", (char *) w->name);
-	printf("%d\t\t", (int) w->stock.nbContainer);
+	printf("stock : %d\t\t", (int) w->stock.nbContainer);
 	printf("%s\t\n", (char *) w->refCard.refPiece);
 }
+
+void print_Containerstar(Container* cont)
+{
+	printf("%d\t\t", (int) cont->nbPieces);
+	print_Card(cont->magneticCard);
+}
+
+
+/*void print_Stockstar(Stock* st)
+{
+
+}
+*/
+
+
+
+

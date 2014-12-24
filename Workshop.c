@@ -114,18 +114,23 @@ void* Middle_Step_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
-	//Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
-	workshop = initWorkshop(workshop, "Workshop", *numberThread);
-	
+
+	workshop = initWorkshop(workshop, "Workshop", *numberThread, 0);	
 	list_insert(workshopList, workshop);
 	
 	sleep(2+*numberThread);	
 	print_Workshopstar(workshop);
-
-
-	/*
+	
+	list_print_Container(workshop->stock.listContainer);
+	
 	while(1)
 	{
+		printf("===> entree stop %d\n", *numberThread);
+		sleep((*numberThread)/2);
+		break;
+	}
+	printf("<=== sortie %d\n", *numberThread);
+	/*
 		//reveil du workshop par le tableau de lancement
 		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
 
@@ -172,23 +177,24 @@ void* Middle_Step_thread_fct(void* arg)
 		
 	}
 	*/
-	
-	//free(workshop);
-	//free(container);
-	
+	list_delete(&(workshop->stock.listContainer));
+	//list_delete(&(workshop->bal.listCard));
+	free(workshop);
+		
 	pthread_exit(NULL);
 }
 
 
 void* Final_Product_thread_fct(void* arg)
 {
-	int* lastNumber = (int*) arg; //?
 	int* numberThread = (int*) arg;
 	Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
-	Container **container = (Container**) malloc(nbContainerByStock*sizeof(Container*));
 	
-	//Container* tmpContainer;
-
+	finalProduct = initWorkshop(finalProduct, "Final_product", *numberThread, 1);	
+	list_insert(workshopList, finalProduct);
+	
+	print_Workshopstar(finalProduct);
+	
 	//finalProduct = initFinalProduct(finalProduct, "Final Product", *numberThread, container);	
 
 	/*
@@ -230,8 +236,7 @@ void* Final_Product_thread_fct(void* arg)
 
 	}*/
 	
-	//free(finalProduct);
-	//free(container);
+	free(finalProduct);
 	
 	pthread_exit(NULL);
 }

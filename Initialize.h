@@ -16,7 +16,7 @@ Stock initStock(Card);
 Card initCard();
 Container* initContainer(Card);
 Container initContainerWorkshop();
-Workshop* initWorkshop(Workshop*, char*, int);
+Workshop* initWorkshop(Workshop*, char*, int, int);
 LB initLB();
 
 char* concatStringInt(char*, int);

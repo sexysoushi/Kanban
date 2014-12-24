@@ -152,7 +152,7 @@ void list_delete (list ** pl)
 
 
 
-char* list_seek_char(char* s, list* l)
+char* list_seekName_char(char* s, list* l)
 {
 	char* tmp = NULL;
 	if(l)
@@ -171,7 +171,7 @@ char* list_seek_char(char* s, list* l)
 
 
 
-void* list_seek_voidstar(char* s, list* l)
+void* list_seekName_voidstar(char* s, list* l)
 {
 	void *tmp = NULL;
 	Card *tmpCard;
@@ -190,6 +190,28 @@ void* list_seek_voidstar(char* s, list* l)
 	}
 	return tmp;
 }
+
+
+void* list_seekCardDesignation_voidstar(char* s, list* l)
+{
+	void *tmp = NULL;
+	Card *tmpCard;
+	if(l)
+	{
+		list_first(l);
+		tmp = list_data(l);
+		tmpCard = (Card*) tmp;
+		
+		while(l->currentElem && strcmp(tmpCard->designationPiece,s))
+		{
+			list_next(l);
+			tmp = list_data(l);
+			tmpCard = (Card*) tmp;
+		}		
+	}
+	return tmp;
+}
+
 
 
 
@@ -254,6 +276,26 @@ void list_print_Workshop (list * l)
 	printf("\n");
 }
 
+void list_print_Container (list * l)
+{
+	int i;
+   	int size = l->nbElem;
+   	Container *tmpContainer;
+
+   	list_first (l);
+   	
+   	for (i = 0; i<size; i++)
+	{
+		tmpContainer = (Container*) list_data (l);
+      	if (list_data (l) != NULL)
+      	{
+      		printf("Container %d\t\t-->\t\t", i+1);
+      		print_Containerstar(tmpContainer);
+      	}
+      	list_next (l);
+   	}
+	printf("\n");
+}
 
 
 
