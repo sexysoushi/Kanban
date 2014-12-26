@@ -70,43 +70,52 @@ void* Supplier_Step_thread_fct(void* arg)
 { 	
 	int* numberThread = (int*) arg;
 	Workshop *supplier = (Workshop*) malloc(sizeof(Workshop));
-
+	Container* tmpContainer;
 	supplier = initWorkshop(supplier, "Supplier", *numberThread, -1);	
 	list_insert(workshopList, supplier);
+	list_insert(supplier.containerToSendList, supplier->containerToSend); //initialise un container dans la liste des containers à remplir et envoyer
 	
 	sleep(2);	
 	print_Card(supplier->refCard);
 	print_Workshopstar(supplier);
 	list_print_Container(supplier->stock.listContainer);
-	
+	/*
 	while(1)
 	{
 		printf("===> entree stop %d\n",	0);
 		break;
 	}
 	printf("<=== sortie %d\n", 0);
-	
-	/*while(1)
+	*/
+	while(1)
 	{
 		//reveil du supplier par le tableau de lancement
-		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
-		
+		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread]);
+
 		//met les pieces fabriquées dans un container destiné au poste en aval
 		while(supplier->containerToSend.nbPieces != nbPieceByContainer)
 		{
 			//fabrication piece
 			usleep(200);
 			supplier->containerToSend.nbPieces++;
+			
 		}
 
 		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
 		if(supplier->containerToSend.nbPieces == nbPieceByContainer)
 		{
-			list_insert(supplier->containerToSend, workshopEnAval->stock.listContainer);
+			list_insert(workshop->stock.listContainer, supplier->containerToSend);
+			list_removeFirst(supplier->containerToSendList);//est ce necessaire ou le container a déjà ete supprimé en étant envoyé dans une autre liste ?
+
+			//on remplace containerToSend par le container vide envoyé par le poste en aval
+			list_first(supplier->containerToSendList);
+			tmpContainer = (Container*) list_data(supplier->containerToSendList);
+			supplier->containerToSend = *tmpContainer;
+			list_removeFirst(supplier->containerToSendList);
 		}
 
 	}
-	*/
+	
 	pthread_exit(NULL);
 }
 
@@ -115,7 +124,7 @@ void* Middle_Step_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
-
+	Container* tmpContainer;
 	workshop = initWorkshop(workshop, "Workshop", *numberThread, 0);	
 	list_insert(workshopList, workshop);
 	
@@ -190,7 +199,7 @@ void* Final_Product_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
 	Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
-	
+	Container* tmpContainer;
 	finalProduct = initWorkshop(finalProduct, "Final_product", *numberThread, 1);	
 	list_insert(workshopList, finalProduct);
 	
@@ -207,6 +216,7 @@ void* Final_Product_thread_fct(void* arg)
 	}
 	printf("<=== sortie %d\n", nbMiddleStep+1);
 */
+
 	while(1)
 	{
 		//reveil du producteur final par le tableau de lancement
@@ -216,8 +226,8 @@ void* Final_Product_thread_fct(void* arg)
 		if(finalProduct->actualUsedContainer.nbPieces == 0)
 		{
 			//Envoi du container vide au poste en amont !
-			list_insert(workshop->stock.listContainer, finalProduct->actualUsedContainer);
-		
+			list_insert(workshop->stock.containerToSendList, finalProduct->actualUsedContainer);
+			
 			//prend un container plein du stock
 			list_first(finalProduct->stock.listContainer);
 			tmpContainer = (Container*) list_data(finalProduct->stock.listContainer);
