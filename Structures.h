@@ -74,8 +74,6 @@ typedef struct {
 	BAL bal;
 	Stock stock;
 	Container actualUsedContainer;
-	Container containerToSend; // container qu'on rempli et envoie au stock du poste en aval
-	list* containerToSendList; //liste des containers à remplir et envoyer au poste en aval
 	Card refCard;
 	char* name;
 } Workshop;

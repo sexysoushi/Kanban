@@ -12,23 +12,19 @@ void* Postman_thread_fct(void* arg)
 {
 	postmanListCard = list_new();
 	
-	/*while(1)
+	while(1)
 	{
 		pthread_mutex_lock(&mutexTab[1]); 	  		
-
-		//check toutes les BAL
-		//recup_cm = getLastElementData(BALlistCard);
-		//list_RemoveLastElem (BAL_listCard);
-
-		//ajoute à sa liste toutes les cartes magnetiques
-		//list_insertHead(Postman_listCard, recup_cm);
+		
+		//on recupère les cartes magnetiques de chaque BAL et les mets dans la liste du postman
+		
 
 		pthread_mutex_unlock(&mutexTab[1]); 	  		
-	}*/
+	}
 	//envoi ça liste au Tableau de lancement
-	//pthread_cond_signal(&condTab[1]);	
-	
-	//list_delete(&postmanListCard);
+		
+
+	list_delete(&postmanListCard);
 }
 
 
@@ -91,28 +87,16 @@ void* Supplier_Step_thread_fct(void* arg)
 		//reveil du supplier par le tableau de lancement
 		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread]);
 
-		//met les pieces fabriquées dans un container destiné au poste en aval
-		while(supplier->containerToSend.nbPieces != nbPieceByContainer)
+		//met les pieces fabriquées dans un container du stock destiné au poste en aval
+		while(list_first(workshop->stock.listContainer).nbPieces != nbPieceByContainer)
 		{
 			//fabrication piece
 			usleep(200);
-			supplier->containerToSend.nbPieces++;
+			list_first(workshop->stock.listContainer).nbPieces++;
 			
 		}
 
-		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
-		if(supplier->containerToSend.nbPieces == nbPieceByContainer)
-		{
-			list_insert(workshop->stock.listContainer, supplier->containerToSend);
-			list_removeFirst(supplier->containerToSendList);//est ce necessaire ou le container a déjà ete supprimé en étant envoyé dans une autre liste ?
-
-			//on remplace containerToSend par le container vide envoyé par le poste en aval
-			list_first(supplier->containerToSendList);
-			tmpContainer = (Container*) list_data(supplier->containerToSendList);
-			supplier->containerToSend = *tmpContainer;
-			list_removeFirst(supplier->containerToSendList);
-		}
-
+	
 	}
 	
 	pthread_exit(NULL);
@@ -163,26 +147,13 @@ void* Middle_Step_thread_fct(void* arg)
 			
 		}
 
-		//met les pieces fabriquées dans un container destiné au poste en aval
-		while(workshop->containerToSend.nbPieces != nbPieceByContainer)
+		//met les pieces fabriquées dans un container du stock destiné au poste en aval
+		while(list_first(finalProduct->stock.listContainer).nbPieces != nbPieceByContainer)
 		{
 			//fabrication piece
 			usleep(200);
-			workshop->containerToSend.nbPieces++;
+			list_first(finalProduct->stock.listContainer).nbPieces++;
 			
-		}
-
-		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
-		if(workshop->containerToSend.nbPieces == nbPieceByContainer)
-		{
-			list_insert(finalProduct->stock.listContainer, workshop->containerToSend);
-			list_removeFirst(workshop->containerToSendList);//est ce necessaire ou le container a déjà ete supprimé en étant envoyé dans une autre liste ?
-
-			//on remplace containerToSend par le container vide envoyé par le poste en aval
-			list_first(workshop->containerToSendList);
-			tmpContainer = (Container*) list_data(workshop->containerToSendList);
-			workshop->containerToSend = *tmpContainer;
-			list_removeFirst(workshop->containerToSendList);
 		}
 
 		//Envoi du container vide au poste en amont !
@@ -229,7 +200,7 @@ void* Final_Product_thread_fct(void* arg)
 		if(finalProduct->actualUsedContainer.nbPieces == 0)
 		{
 			//Envoi du container vide au poste en amont !
-			list_insert(workshop->stock.containerToSendList, finalProduct->actualUsedContainer);
+			list_insert(workshop->stock.listContainer, finalProduct->actualUsedContainer);
 			
 			//prend un container plein du stock
 			list_first(finalProduct->stock.listContainer);
