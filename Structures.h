@@ -35,6 +35,7 @@ pthread_mutex_t mutexTab[nbMutex];
 pthread_cond_t condTab[nbCond];	
 
 int nbProductsWanted;	// Client's asking
+int nbProductsWantedFinish = 0; //Client's pieces finish
 list* postmanListCard;	
 list* referenceListCard;
 list* workshopList;

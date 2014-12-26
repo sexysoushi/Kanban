@@ -198,7 +198,7 @@ void* Final_Product_thread_fct(void* arg)
 	print_Card(finalProduct->refCard);
 	print_Workshopstar(finalProduct);
 	list_print_Container(finalProduct->stock.listContainer);
-
+/*
 	while(1)
 	{
 		printf("===> entree stop %d\n", nbMiddleStep+1);
@@ -206,20 +206,23 @@ void* Final_Product_thread_fct(void* arg)
 		break;
 	}
 	printf("<=== sortie %d\n", nbMiddleStep+1);
-
-	/*
+*/
 	while(1)
 	{
 		//reveil du producteur final par le tableau de lancement
-		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
+		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread]);
 
-		//prend un container du stock si actualcontainer = 0;	
+		// si actualcontainer = 0;	
 		if(finalProduct->actualUsedContainer.nbPieces == 0)
 		{
-			list_first(stock.listContainer);
-			tmpContainer = (Container*) list_data(stock.listContainer);
-			actualUsedContainer = *tmpContainer;
-			list_removeFirst(stock.listContainer);
+			//Envoi du container vide au poste en amont !
+			list_insert(workshop->stock.listContainer, finalProduct->actualUsedContainer);
+		
+			//prend un container plein du stock
+			list_first(finalProduct->stock.listContainer);
+			tmpContainer = (Container*) list_data(finalProduct->stock.listContainer);
+			finalProduct->actualUsedContainer = *tmpContainer;
+			list_removeFirst(finalProduct->stock.listContainer);
 		}
 
 		// ici prendre une piece dans le container
@@ -229,22 +232,15 @@ void* Final_Product_thread_fct(void* arg)
 		if(finalProduct->actualUsedContainer.nbPieces == nbPieceByContainer-1)
 		{
 			// Mettre carte dans la boite aux lettres
-			list_insert(finalProduct->actualUsedContainer.magneticCard, finalProduct->bal.listCard);
+			list_insert(finalProduct->bal.listCard, finalProduct->actualUsedContainer.magneticCard);
 			
 		}	
 		//fabrication de la piece
 		usleep(200);
-
-		//Envoi du container vide au poste en amont !
-		if(finalProduct->actualUsedContainer.nbPieces == 0)
-		{
-			list_insert(finalProduct->actualUsedContainer, workshopEnAmont->stock.listContainer);
-		}
 		printf("1 Piece finale produite");
-		nbPieceDemand++;
+		nbProductsWantedFinish++;
 
-
-	}*/
+	}
 	
 	list_delete(&(finalProduct->stock.listContainer));
 	//list_delete(&(workshop->bal.listCard));

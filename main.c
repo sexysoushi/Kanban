@@ -121,23 +121,26 @@ int main(int argc, char* argv[])
 		
 	printf("\n all Join reached \n");
 	
-	list_delete(&referenceListCard);
-	list_delete(&workshopList);
+	//if all Client's piece asking are product => Stop the production
+	if(nbProductsWantedFinish == nbProductsWanted)
+	{
+		list_delete(&referenceListCard);
+		list_delete(&workshopList);
 	
-	//free(cardWorkshopName);
-	//free(cardRefPiece);
-	//free(cardDesignationPiece);
-	//free(cardNameWorkshopSupplier);
-	free(tabNumber);
+		//free(cardWorkshopName);
+		//free(cardRefPiece);
+		//free(cardDesignationPiece);
+		//free(cardNameWorkshopSupplier);
+		free(tabNumber);
 	
-	pthread_mutex_destroy(&initCardRef);
-	pthread_mutex_destroy(&stopMutex);
-	for(i=0; i<nbMutex; i++)
-		pthread_mutex_destroy(&mutexTab[i]);
+		pthread_mutex_destroy(&initCardRef);
+		pthread_mutex_destroy(&stopMutex);
+		for(i=0; i<nbMutex; i++)
+			pthread_mutex_destroy(&mutexTab[i]);
 		
-	for(i=0; i<nbCond; i++)
-		pthread_cond_destroy(&condTab[i]);
-
+		for(i=0; i<nbCond; i++)
+			pthread_cond_destroy(&condTab[i]);
+	}
 	return 0;
 }
 
