@@ -139,11 +139,14 @@ void list_delete (list ** pl)
    	if (pl && *pl)
    	{
       	list_first (*pl);
-
-      	while ((*pl)->currentElem->next != NULL)
-         	list_removeNext (*pl);
-
-      	list_removeFirst (*pl);
+		if((*pl)->currentElem != NULL)
+		{
+		  	while ((*pl)->currentElem->next != NULL)
+		     	list_removeNext (*pl);
+		
+      		list_removeFirst (*pl);
+      	}
+      	
       	free ((*pl)->currentElem);
       	(*pl)->currentElem = NULL;
       	free (*pl), *pl = NULL;

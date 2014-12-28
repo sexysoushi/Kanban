@@ -120,7 +120,7 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 	Card stockCard;
 	char* tmpChar;
 	
-	ws->name = concatStringInt(s, number);;
+	ws->name = concatStringInt(s, number);
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainerWorkshop();
 	

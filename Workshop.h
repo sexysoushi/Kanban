@@ -9,15 +9,6 @@
 #include "Structures.h"
 #include "Initialize.h"
 
-Workshop *supplier = (Workshop*) malloc(sizeof(Workshop));
-supplier = initWorkshop(supplier, "Supplier", *numberThread, -1);
-
-Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
-workshop = initWorkshop(workshop, "Workshop", *numberThread, 0);
-
-Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
-finalProduct = initWorkshop(finalProduct, "Final_product", *numberThread, 1);
-
 //Tableau de lancement
 void* Launching_board_thread_fct(void* arg);
 //Homme flux

@@ -16,7 +16,7 @@
 #include "List.h"
 
 
-#define nbMiddleStep 20		// at least 1
+#define nbMiddleStep 3		// at least 1
 #define nbDiffentCard nbMiddleStep+1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
@@ -28,14 +28,16 @@
 pthread_t t1, t2, t3, t4;	// 4 indispensable threads 
 pthread_t threadTab[nbMiddleStep]; 	// Threads for dynamic number of workshop
 
-pthread_mutex_t initCardRef;
+pthread_mutex_t initCardRef, mutexListWorkshop;
 pthread_mutex_t stopMutex;
+pthread_mutex_t mutexPostman_listcard;
 pthread_mutex_t mutexTab[nbMutex];	
 
 pthread_cond_t condTab[nbCond];	
+pthread_cond_t condPostmanWakeUp, condLBWakeUp;
 
 int nbProductsWanted;	// Client's asking
-int nbProductsWantedFinish = 0; //Client's pieces finish
+int nbProductsFinished;	//Client's pieces finish
 list* postmanListCard;	
 list* referenceListCard;
 list* workshopList;

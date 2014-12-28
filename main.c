@@ -1,7 +1,7 @@
 /* Application of the Kanban's method
  * 
  * Authors : Renaud Guillaume - Schiavi Barbara
- * Last modification : December 24, 2014
+ * Last modification : December 28, 2014
  */
 
 #include "Initialize.h"
@@ -20,6 +20,8 @@ void applicateWhenSIGINT(int s)
 
 int main(int argc, char* argv[])
 {
+	nbProductsFinished = 0;
+
 	//if elemSize doesn't increase when nbMiddleStep increase, there are some problems when list_print_Card() is called 
 	int elemSize = nbMiddleStep;
 	int i;  
@@ -70,12 +72,18 @@ int main(int argc, char* argv[])
 	/* Mutex */
 	for(i=0; i<nbMutex; i++)
 		pthread_mutex_init(&mutexTab[i], NULL);
+		
 	pthread_mutex_init(&initCardRef, NULL);
 	pthread_mutex_init(&stopMutex, NULL);
+	pthread_mutex_init(&mutexPostman_listcard, NULL);
+	pthread_mutex_init(&mutexListWorkshop, NULL);
 	
 	/* Conditions */
 	for(i=0; i<nbCond; i++)	
 		pthread_cond_init(&condTab[i], NULL);	
+		
+	pthread_cond_init(&condPostmanWakeUp, NULL);
+	pthread_cond_init(&condLBWakeUp, NULL);
 
 	/* Mask for SIGINT signal */
 	signal(SIGINT,applicateWhenSIGINT);
@@ -121,26 +129,27 @@ int main(int argc, char* argv[])
 		
 	printf("\n all Join reached \n");
 	
-	//if all Client's piece asking are product => Stop the production
-	if(nbProductsWantedFinish == nbProductsWanted)
-	{
-		list_delete(&referenceListCard);
-		list_delete(&workshopList);
+	list_delete(&referenceListCard);
+	list_delete(&workshopList);
 	
-		//free(cardWorkshopName);
-		//free(cardRefPiece);
-		//free(cardDesignationPiece);
-		//free(cardNameWorkshopSupplier);
-		free(tabNumber);
+	//free(cardWorkshopName);
+	//free(cardRefPiece);
+	//free(cardDesignationPiece);
+	//free(cardNameWorkshopSupplier);
+	free(tabNumber);
 	
-		pthread_mutex_destroy(&initCardRef);
-		pthread_mutex_destroy(&stopMutex);
-		for(i=0; i<nbMutex; i++)
-			pthread_mutex_destroy(&mutexTab[i]);
+	pthread_mutex_destroy(&initCardRef);
+	pthread_mutex_destroy(&stopMutex);
+	pthread_mutex_destroy(&mutexPostman_listcard);
+	pthread_mutex_destroy(&mutexListWorkshop);
+	for(i=0; i<nbMutex; i++)
+		pthread_mutex_destroy(&mutexTab[i]);
 		
-		for(i=0; i<nbCond; i++)
-			pthread_cond_destroy(&condTab[i]);
-	}
+	pthread_cond_destroy(&condPostmanWakeUp);
+	pthread_cond_destroy(&condLBWakeUp);
+	for(i=0; i<nbCond; i++)
+		pthread_cond_destroy(&condTab[i]);
+
 	return 0;
 }
 
