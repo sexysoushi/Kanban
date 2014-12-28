@@ -65,7 +65,7 @@ Stock initStock()
 }
 
 
-Stock initStockCard(Card c)
+Stock initStockCard(Card* c)
 {
 	Stock st;
 	int i;
@@ -96,16 +96,29 @@ Card initCard()
 	return cd;
 }
 
+
+Card* initCardstar()
+{
+	Card* cd = (Card*) malloc(sizeof(Card));;
+	cd->workshopName = NULL;
+	cd->nbMaxPiecesContainer = 0;
+	cd->refPiece = NULL;
+	cd->designationPiece = NULL;
+	cd->nameWorkshopSupplier = NULL;
+	cd->numOrder = 0;
+	return cd;
+}
+
 Container initContainerWorkshop()
 {
 	Container cont;
 	cont.nbPieces = 0;
-	cont.magneticCard = initCard();
+	cont.magneticCard = initCardstar();
 	return cont;
 }
 
 
-Container* initContainer(Card c)
+Container* initContainer(Card* c)
 {
 	Container* cont = (Container*) malloc(sizeof(Container));
 	cont->nbPieces = nbPieceByContainer;
@@ -117,12 +130,12 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 {
 	int i;
 	Card* tmpCard;
-	Card stockCard;
 	char* tmpChar;
 	
 	ws->name = concatStringInt(s, number);
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainerWorkshop();
+	ws->containerToSend = initContainerWorkshop();
 	
 	// Protection by mutex because of referenceListCard multiple access 
 	pthread_mutex_lock(&initCardRef);
@@ -156,12 +169,12 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 			
 		// Put the good refCard in the stock's containers
 		tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
-		stockCard = *tmpCard;
 		
 		//Stock initilization
-		ws->stock = initStockCard(stockCard);
+		ws->stock = initStockCard(tmpCard);
 	}
-		
+	
+	*(ws->containerToSend.magneticCard) = ws->refCard;
 	
 	/* Put the good refCard in the stock's containers
 	tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
@@ -177,12 +190,12 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 	return ws;
 }
 
-
+/*
 LB initLB()
 {
 	LB lb;
 	lb.listCard = list_new();
 	return lb;
 }
-
+*/
 

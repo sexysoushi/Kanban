@@ -21,4 +21,6 @@ void* Middle_Step_thread_fct(void* arg);
 void* Final_Product_thread_fct(void* arg);
 
 
+void takeNewContainerFromStock(Workshop*);
+
 #endif /* WORKSHOP_H */

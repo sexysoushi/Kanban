@@ -38,7 +38,7 @@ void print_Workshopstar(Workshop* w)
 void print_Containerstar(Container* cont)
 {
 	printf("%d\t\t", (int) cont->nbPieces);
-	print_Card(cont->magneticCard);
+	print_Cardstar(cont->magneticCard);
 }
 
 

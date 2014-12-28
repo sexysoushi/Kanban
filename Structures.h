@@ -54,7 +54,7 @@ typedef struct {
 
 
 typedef struct {
-	Card magneticCard;
+	Card* magneticCard;
 	int nbPieces;
 } Container;
 
@@ -75,16 +75,16 @@ typedef struct {
 typedef struct {
 	BAL bal;
 	Stock stock;
-	Container actualUsedContainer;
+	Container actualUsedContainer, containerToSend;
 	Card refCard;
 	char* name;
 } Workshop;
 
-
+/*
 typedef struct {
 	list *listCard;
 }LB; //Launching Board
-
+*/
 
 /*Functions implemented at the beginning of the main file */
 void applicateWhenSIGINT(int);

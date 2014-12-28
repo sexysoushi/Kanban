@@ -39,7 +39,7 @@ void* Postman_thread_fct(void* arg)
 				{
 					tmpCard = (Card*) list_data(tmpListCard);
 					list_insert(postmanListCard, tmpCard);
-					list_removeNext(tmpListCard);
+					list_removeFirst(tmpListCard);
 				}
 			}
 		// ***************************************************************************
@@ -47,11 +47,15 @@ void* Postman_thread_fct(void* arg)
 		}
 		pthread_mutex_unlock(&mutexListWorkshop);	 
 		
+		printf("before signal postman\n");
 		// Wake up the LB for cards transmission
 		pthread_cond_signal(&condLBWakeUp);
+		printf("after signal postman !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 	
+		printf("before wait postman\n");
 		// Wait for LB signal
 		pthread_cond_wait(&condPostmanWakeUp, &mutexPostman_listcard);
+		printf("after wait postman\n");
 		
 		pthread_mutex_unlock(&mutexPostman_listcard); 
 		
@@ -75,8 +79,8 @@ Tableau de lancement reveil poste en amont afin qu'il refournisse en pieces la c
 */
 void* Launching_board_thread_fct(void* arg)
 {
-	Card *tmp_card;
-	void* recup_tmp;
+	int i,j;
+	Card *tmpCard;
 	
 	
 	printf("===> entree stop Launching_board\n");
@@ -85,28 +89,45 @@ void* Launching_board_thread_fct(void* arg)
 		pthread_mutex_lock(&mutexPostman_listcard); 	
 		
 		// Wait for Postman signal
+		printf("before wait LB !!!!!!!!!!!!!!!!!!!!!!!!\n");
 		pthread_cond_wait(&condLBWakeUp, &mutexPostman_listcard);
-		  
-		sleep(1);		
-		//on recupère les cartes magnetiques de postmanListCard et on envoi les ordres de fabrication (reveils workshops) 
+		printf("after wait LB\n");
+		sleep(1);	
 		
-		//check la liste envoyée par l'homme flux
-		//while(Postman_listCard != NULL)
-		//{
-			//check toutes les cartes de l'homme flux
-			//recup_tmp = getLastElementData(Postman_listCard);
-			//list_RemoveLastElem (Postman_listCard);
-
-			//ajoute à sa liste toutes les cartes magnetiques
-			//list_insertHead(LB_listCard, recup_tmp);
-		//}
+		list_first(postmanListCard);
 		
-		//while
-			//on recupere les données de la carte magnetique
-			//recup_tmp = getLastElementData(LB_listCard);
-			//tmp_card = (Card*) recup_tmp;
-			//tmp_card->ref_piece;
-		//fin while
+		for(i=0; i<postmanListCard->nbElem; i++)
+		{
+			tmpCard = (Card*) list_data(postmanListCard);
+			
+			for(j=1; j<(nbMiddleStep+1); j++)
+			{
+				if(tmpCard->workshopName == concatStringInt("Supplier", j))
+				{
+					printf("before signal LB\n");
+					// here with just one supplier j-1 must be equal to 0
+					pthread_mutex_lock(&mutexTab[j-1]);
+					pthread_cond_signal(&condTab[j-1]);
+					pthread_mutex_unlock(&mutexTab[j-1]);
+					printf("after signal LB\n");
+					break;
+				}
+				
+				if(tmpCard->workshopName == concatStringInt("Workshop", j))
+				{
+					printf("before signal LB\n");
+					pthread_mutex_lock(&mutexTab[j]);
+					pthread_cond_signal(&condTab[j]);
+					pthread_mutex_unlock(&mutexTab[j]);
+					printf("after signal LB : sent to %s (j = %d)\n", tmpCard->workshopName, j);
+					break;
+				}
+			}
+					
+			list_removeFirst(postmanListCard);
+			list_next(postmanListCard);
+		}
+			
 		pthread_mutex_unlock(&mutexPostman_listcard);
 		
 		// Wake up the LB for receiving all cards
@@ -136,7 +157,7 @@ void* Supplier_Step_thread_fct(void* arg)
 	supplier = initWorkshop(supplier, "Supplier", *numberThread, -1);	
 	list_insert(workshopList, supplier);
 	
-	sleep(2);	
+	sleep(1);	
 	//print_Card(supplier->refCard);
 	//print_Workshopstar(supplier);
 	//list_print_Container(supplier->stock.listContainer);
@@ -144,7 +165,28 @@ void* Supplier_Step_thread_fct(void* arg)
 	printf("===> entree stop %d\n",	0);
 	while(1)
 	{
-		sleep(2 + *numberThread);
+		pthread_mutex_lock(&mutexTab[0]);
+		
+		//reveil du workshop par le tableau de lancement
+		pthread_cond_wait(&condTab[0], &mutexTab[0]);
+		
+			
+		//met les pieces fabriquées dans un container destiné au poste en aval
+		//while(supplier->containerToSend.nbPieces != nbPieceByContainer)
+		//{
+			//fabrication piece
+			//usleep(200);
+			//supplier->containerToSend.nbPieces++;
+		//}
+
+		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
+		//if(supplier->containerToSend.nbPieces == nbPieceByContainer)
+		//{
+			//list_insert(supplier->containerToSend, workshopEnAval->stock.listContainer);
+		//}
+		
+		pthread_mutex_lock(&mutexTab[0]);
+		sleep(1);
 
 		// Protection by mutex because of nbProductsFinished multiple access 
 		pthread_mutex_lock(&stopMutex);
@@ -157,28 +199,7 @@ void* Supplier_Step_thread_fct(void* arg)
 		pthread_mutex_unlock(&stopMutex);
 	}
 	printf("<=== sortie %d\n", 0);
-	
-	/*while(1)
-	{
-		//reveil du supplier par le tableau de lancement
-		pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
-		
-		//met les pieces fabriquées dans un container destiné au poste en aval
-		while(supplier->containerToSend.nbPieces != nbPieceByContainer)
-		{
-			//fabrication piece
-			usleep(200);
-			supplier->containerToSend.nbPieces++;
-		}
 
-		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
-		if(supplier->containerToSend.nbPieces == nbPieceByContainer)
-		{
-			list_insert(supplier->containerToSend, workshopEnAval->stock.listContainer);
-		}
-
-	}
-	*/
 	
 	// Frees and exit
 	list_delete(&(supplier->stock.listContainer));
@@ -197,54 +218,62 @@ void* Middle_Step_thread_fct(void* arg)
 	workshop = initWorkshop(workshop, "Workshop", *numberThread, 0);	
 	list_insert(workshopList, workshop);
 	
-	sleep(2 + *numberThread);	
+	sleep(1);	
 	//print_Card(workshop->refCard);
 	//print_Workshopstar(workshop);
 	//list_print_Container(workshop->stock.listContainer);
 	
 	printf("===> entree stop %d\n", *numberThread);
 	while(1)
-	{
+	{	
+		pthread_mutex_lock(&mutexTab[*numberThread]);
+		
+		printf("%s : before Wait \n", workshop->name);
 		//reveil du workshop par le tableau de lancement
-		//pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
-
+		pthread_cond_wait(&condTab[*numberThread], &mutexTab[*numberThread]);
+		printf("%s : after Wait \n", workshop->name);
+		
 		//prend un container du stock si actualcontainer = 0;	
-		//if(workshop->actualUsedContainer.nbPieces == 0)
-		//{
-			//list_first(stock.listContainer);
-			//tmpContainer = (Container*) list_data(stock.listContainer);
-			//actualUsedContainer = *tmpContainer;
-			//list_removeFirst(stock.listContainer);
-		//}
+		if(workshop->actualUsedContainer.nbPieces == 0)
+			takeNewContainerFromStock(workshop);
 		
 		//consomme le container
-		//workshop->actualUsedContainer.nbPieces--;
+		workshop->actualUsedContainer.nbPieces--;
 
 		//si une piece a ete prise dans le container
-		//if(workshop->actualUsedContainer.nbPieces == nbPieceByContainer-1)
-		//{
+		if(workshop->actualUsedContainer.nbPieces == nbPieceByContainer-1)
+		{
 			// Mettre carte dans la boite aux lettres
-			//list_insert(workshop->actualUsedContainer.magneticCard, workshop->bal.listCard);
-		//}
+			list_insert(workshop->bal.listCard, (void*) workshop->actualUsedContainer.magneticCard);
+			printf("%s : Carte dans BAL \n", workshop->name);
+		}
 		
-		//met les pieces fabriquées dans un container destiné au poste en aval
-		//while(workshop->containerToSend.nbPieces != nbPieceByContainer)
-		//{
-			//fabrication piece
-			//usleep(200);
-			//workshop->containerToSend.nbPieces++;
-		//}
+		printf("%s : Piece's creation in progress...\n", workshop->name); 
+		sleep(4);
+		
+		//met la piece fabriquée dans un container destiné au poste en aval
+		
+		workshop->containerToSend.nbPieces++;	
 
-		//envoi le container (ajoute containerToSend à la fin du stock des container du poste en aval)
-		//if(workshop->containerToSend.nbPieces == nbPieceByContainer)
-			//list_insert(workshop->containerToSend, workshopEnAval->stock.listContainer);
+		if((*numberThread+1) == (nbMiddleStep+1))
+		{
+			pthread_mutex_lock(&mutexTab[*numberThread +1]);
+			pthread_cond_signal(&condTab[*numberThread +1]);
+			pthread_mutex_unlock(&mutexTab[*numberThread +1]);
+		}
+		//envoi le container dans le stock du post en aval
+		/*if(workshop->containerToSend.nbPieces == nbPieceByContainer)
+		{
+			list_insert(workshopEnAval->stock.listContainer, workshop->containerToSend);
+			workshop->containerToSend.nbPieces = 0;
+		}*/
 
 		//Envoi du container vide au poste en amont !
 		//if(workshop->actualUsedContainer.nbPieces == 0)
 			//list_insert(workshop->actualUsedContainer, workshopEnAmont->stock.listContainer);
 		
-	
-		sleep(2 + *numberThread);	
+		pthread_mutex_unlock(&mutexTab[*numberThread]);	
+		sleep(1);	
 
 		// Protection by mutex because of nbProductsFinished multiple access 
 		pthread_mutex_lock(&stopMutex);
@@ -270,12 +299,14 @@ void* Middle_Step_thread_fct(void* arg)
 void* Final_Product_thread_fct(void* arg)
 {
 	int* numberThread = (int*) arg;
+	
+	void* tmpElemVoidstar;
 	Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
 	
 	finalProduct = initWorkshop(finalProduct, "Final_product", *numberThread, 1);	
 	list_insert(workshopList, finalProduct);
 	
-	sleep(2 + nbMiddleStep+1);	
+	sleep(1);	
 	//print_Card(finalProduct->refCard);
 	//print_Workshopstar(finalProduct);
 	//list_print_Container(finalProduct->stock.listContainer);
@@ -283,39 +314,39 @@ void* Final_Product_thread_fct(void* arg)
 	printf("===> entree stop %d\n", nbMiddleStep+1);
 	while(1)
 	{
-		//reveil du producteur final par le tableau de lancement
-		//pthread_mutex_wait(&condTab[numberThread], &mutexTab[numberThread])
-
+		pthread_mutex_lock(&mutexTab[nbMiddleStep+1]);
+	
 		//prend un container du stock si actualcontainer = 0;	
-		//if(finalProduct->actualUsedContainer.nbPieces == 0)
-		//{
-			//list_first(stock.listContainer);
-			//tmpContainer = (Container*) list_data(stock.listContainer);
-			//actualUsedContainer = *tmpContainer;
-			//list_removeFirst(stock.listContainer);
-		//}
+		if(finalProduct->actualUsedContainer.nbPieces == 0)
+			takeNewContainerFromStock(finalProduct);
+		
+		//print_Workshopstar(finalProduct);
+		//list_print_Container(finalProduct->stock.listContainer);
+		//print_Containerstar(tmpContainer);
+		
 
 		// ici prendre une piece dans le container
-		//finalProduct->actualUsedContainer.nbPieces--;
+		finalProduct->actualUsedContainer.nbPieces--;
 
-		//si une piece a ete prise dans le container
-		//if(finalProduct->actualUsedContainer.nbPieces == nbPieceByContainer-1)
-		//{
-			// Mettre carte dans la boite aux lettres
-			//list_insert(finalProduct->actualUsedContainer.magneticCard, finalProduct->bal.listCard);
-			
-		//}	
+		//si prise de la premiere piece du conteneur
+		if(finalProduct->actualUsedContainer.nbPieces == nbPieceByContainer-1)
+		{
+			// Mettre carte dans la boite aux lettres 
+			list_insert(finalProduct->bal.listCard, (void*) finalProduct->actualUsedContainer.magneticCard);
+			printf("%s : Carte dans BAL \n", finalProduct->name);
+		}
+		
 		//fabrication de la piece
-		//usleep(200);
+		printf("%s : Piece's creation in progress...\n", finalProduct->name); 
+		sleep(4);
 
 		//Envoi du container vide au poste en amont !
 		//if(finalProduct->actualUsedContainer.nbPieces == 0)
 			//list_insert(finalProduct->actualUsedContainer, workshopEnAmont->stock.listContainer);
 		
-		//printf("1 Piece finale produite");
-		//nbPieceDemand++;
-	
-		sleep((nbMiddleStep+1)/2);
+		printf("%s : 1 Piece finished !\n", finalProduct->name);
+		
+		sleep(1);
 		
 		// Protection by mutex because of nbProductsFinished multiple access 
 		pthread_mutex_lock(&stopMutex);
@@ -329,9 +360,15 @@ void* Final_Product_thread_fct(void* arg)
 			break;
 		}
 		pthread_mutex_unlock(&stopMutex);
+		
+		printf("%s : before Wait \n", finalProduct->name);
+		//reveil du producteur final pour créer un autre pièce
+		pthread_cond_wait(&condTab[nbMiddleStep+1], &mutexTab[nbMiddleStep+1]);
+		pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
+		printf("%s : after Wait \n", finalProduct->name);
+		
 	}
 	printf("<=== sortie %d\n", nbMiddleStep+1);
-
 
 	// Frees and exit
 	list_delete(&(finalProduct->stock.listContainer));
@@ -340,5 +377,19 @@ void* Final_Product_thread_fct(void* arg)
 	
 	pthread_exit(NULL);
 }
+
+void takeNewContainerFromStock(Workshop* w)
+{
+	Container *tmpContainer;
+
+	list_first(w->stock.listContainer);
+	tmpContainer = (Container*) list_data(w->stock.listContainer);
+	w->actualUsedContainer = *tmpContainer;
+	list_removeNext(w->stock.listContainer);
+	w->stock.nbContainer--;
+}
+
+
+
 
 
