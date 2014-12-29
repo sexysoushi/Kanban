@@ -135,7 +135,6 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 	ws->name = concatStringInt(s, number);
 	ws->bal = initBAL();
 	ws->actualUsedContainer = initContainerWorkshop();
-	ws->containerToSend = initContainerWorkshop();
 	
 	// Protection by mutex because of referenceListCard multiple access 
 	pthread_mutex_lock(&initCardRef);
@@ -144,7 +143,7 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 	// supplier & middle_step
 	if(boolMiddleStep <= 0)	
 	{
-		tmpCard = (Card*) list_seekName_voidstar(ws->name, referenceListCard);
+		tmpCard = (Card*) list_seekCardName_voidstar(ws->name, referenceListCard);
 		/* Assignement workshop refCard */
 		ws->refCard = *tmpCard;	
 
@@ -174,14 +173,14 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 		ws->stock = initStockCard(tmpCard);
 	}
 	
-	*(ws->containerToSend.magneticCard) = ws->refCard;
-	
+	ws->containerToSend = initContainer(&ws->refCard);
+	ws->containerToSend->nbPieces = 0;
 	/* Put the good refCard in the stock's containers
 	tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
 	stockCard = *tmpCard;
 	
 	// Assignement workshop refCard 
-	tmpCard = (Card*) list_seekName_voidstar(ws->name ,referenceListCard);
+	tmpCard = (Card*) list_seekCardName_voidstar(ws->name ,referenceListCard);
 	ws->refCard = *tmpCard;
 	*/
 	

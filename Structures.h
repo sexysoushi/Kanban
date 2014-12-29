@@ -16,7 +16,7 @@
 #include "List.h"
 
 
-#define nbMiddleStep 3		// at least 1
+#define nbMiddleStep 1		// at least 1
 #define nbDiffentCard nbMiddleStep+1
 #define nbMutex nbMiddleStep+1
 #define nbCond nbMiddleStep+1
@@ -75,7 +75,7 @@ typedef struct {
 typedef struct {
 	BAL bal;
 	Stock stock;
-	Container actualUsedContainer, containerToSend;
+	Container actualUsedContainer, *containerToSend;
 	Card refCard;
 	char* name;
 } Workshop;

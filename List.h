@@ -31,7 +31,8 @@ void list_last (list *);	// Access to the last element of the list
 void list_delete (list **);	// Delete the list in the memory
 
 char* list_seekName_char(char*, list*);
-void* list_seekName_voidstar(char*, list*);
+void* list_seekCardName_voidstar(char*, list*);
+void* list_seekWorkshopName_voidstar(char* s, list* l);
 void* list_seekCardDesignation_voidstar(char*, list*);
 
 void list_print_char (list *);

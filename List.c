@@ -174,7 +174,7 @@ char* list_seekName_char(char* s, list* l)
 
 
 
-void* list_seekName_voidstar(char* s, list* l)
+void* list_seekCardName_voidstar(char* s, list* l)
 {
 	void *tmp = NULL;
 	Card *tmpCard;
@@ -189,6 +189,26 @@ void* list_seekName_voidstar(char* s, list* l)
 			list_next(l);
 			tmp = list_data(l);
 			tmpCard = (Card*) tmp;
+		}		
+	}
+	return tmp;
+}
+
+void* list_seekWorkshopName_voidstar(char* s, list* l)
+{
+	void *tmp = NULL;
+	Workshop *tmpWorkshop;
+	if(l)
+	{
+		list_first(l);
+		tmp = list_data(l);
+		tmpWorkshop = (Workshop*) tmp;
+		
+		while(l->currentElem && strcmp(tmpWorkshop->name,s))
+		{
+			list_next(l);
+			tmp = list_data(l);
+			tmpWorkshop = (Workshop*) tmp;
 		}		
 	}
 	return tmp;
