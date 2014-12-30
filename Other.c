@@ -41,13 +41,24 @@ void print_Containerstar(Container* cont)
 	print_Cardstar(cont->magneticCard);
 }
 
-
-/*void print_Stockstar(Stock* st)
+/*
+Workshop* findWorkshop(char *s)
 {
-
+	int j;
+	Workshop* tmpWorkshop;
+	
+	pthread_mutex_lock(&mutexListWorkshop);
+	list_first(workshopList);
+	
+	for(j=1; j<workshopList->nbElem-1; j++)
+	{	
+		tmpWorkshop = list_seekWorkshopName_voidstar(s, workshopList);
+		
+		return tmpWorkshop;	
+	}
+	
+	pthread_mutex_unlock(&mutexListWorkshop);
 }
 */
-
-
 
 

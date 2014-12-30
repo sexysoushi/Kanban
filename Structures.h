@@ -16,7 +16,7 @@
 #include "List.h"
 
 
-#define nbMiddleStep 1		// at least 1
+#define nbMiddleStep 10		// at least 1
 #define nbDiffentCard nbMiddleStep+1
 #define nbMutex nbMiddleStep+2
 #define nbCond nbMiddleStep+2

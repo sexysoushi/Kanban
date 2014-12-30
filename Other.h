@@ -14,4 +14,6 @@ void print_Card(Card);
 void print_Workshopstar(Workshop*);
 void print_Containerstar(Container*);
 
+Workshop* findWorkshop(char *);
+
 #endif /* OTHER_H */
