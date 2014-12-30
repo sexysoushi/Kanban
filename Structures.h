@@ -18,11 +18,12 @@
 
 #define nbMiddleStep 1		// at least 1
 #define nbDiffentCard nbMiddleStep+1
-#define nbMutex nbMiddleStep+1
-#define nbCond nbMiddleStep+1
+#define nbMutex nbMiddleStep+2
+#define nbCond nbMiddleStep+2
 #define nbPieceByContainer 2
 #define nbContainerByStock 2
 
+#define minusFabricationTime 4
 
 /* Global variables */
 pthread_t t1, t2, t3, t4;	// 4 indispensable threads 

@@ -10,6 +10,7 @@ Un homme flux récupère régulièrement les cartes aux différents postes de mo
 */
 void* Postman_thread_fct(void* arg)
 {
+	int returnSignal;
 	int i,j;
 	postmanListCard = list_new();
 	Workshop* tmpWorkshop;
@@ -21,10 +22,10 @@ void* Postman_thread_fct(void* arg)
 	
 	while(1)
 	{		  
-		//*****************pthread_mutex_lock(&mutexPostman_listcard); 
+		pthread_mutex_lock(&mutexPostman_listcard); 
 
 		//on recupère les cartes magnetiques de chaque BAL et on les mets dans la liste du postman
-		//*****************pthread_mutex_lock(&mutexListWorkshop); 
+		pthread_mutex_lock(&mutexListWorkshop); 
 		
 		list_first(workshopList);
 		for(i=0; i<workshopList->nbElem; i++)
@@ -45,24 +46,29 @@ void* Postman_thread_fct(void* arg)
 			}
 			list_next(workshopList);
 		}
-		//*****************pthread_mutex_unlock(&mutexListWorkshop);	 
+		pthread_mutex_unlock(&mutexListWorkshop);	 
 
 		// Wake up the LB for cards transmission
-		pthread_cond_signal(&condLBWakeUp);
+		do
+		{
+			returnSignal = pthread_cond_signal(&condLBWakeUp);
+		}while(returnSignal != 0);
 
 		// Wait for LB signal
 		pthread_cond_wait(&condPostmanWakeUp, &mutexPostman_listcard);
-
-		//*****************pthread_mutex_unlock(&mutexPostman_listcard); 
+		
+		pthread_mutex_unlock(&mutexPostman_listcard); 
 
 		// Protection by mutex because of nbProductsFinished multiple access 
-		//*****************pthread_mutex_lock(&stopMutex);
+		pthread_mutex_lock(&stopMutex);
+		
 		if(nbProductsFinished == nbProductsWanted)
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 			break;
 		}
-		//*****************pthread_mutex_unlock(&stopMutex);
+		
+		pthread_mutex_unlock(&stopMutex);
 	}
 	printf("<=== sortie Postman\n");
 	
@@ -75,23 +81,24 @@ Tableau de lancement reveil poste en amont afin qu'il refournisse en pieces la c
 */
 void* Launching_board_thread_fct(void* arg)
 {
+	int returnSignal;
 	int i,j;
 	Card *tmpCard;
 	char* tmpChar;
 	
 	while(1)
 	{
-		//*****************pthread_mutex_lock(&mutexPostman_listcard); 	
+		pthread_mutex_lock(&mutexPostman_listcard); 	
 
 		// Wait for Postman signal
 		pthread_cond_wait(&condLBWakeUp, &mutexPostman_listcard);
 
 		// Protection by mutex because of nbProductsFinished multiple access 
-		//*****************pthread_mutex_lock(&stopMutex);
+		pthread_mutex_lock(&stopMutex);
 		
 		if(nbProductsFinished < nbProductsWanted)
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 
 			list_first(postmanListCard);
 		
@@ -104,33 +111,41 @@ void* Launching_board_thread_fct(void* arg)
 					if((strcmp(tmpCard->workshopName,concatStringInt("Supplier", j))) == 0)
 					{
 						// here with just one supplier j-1 must be equal to 0
-						//*****************pthread_mutex_lock(&mutexTab[j-1]);
-						pthread_cond_signal(&condTab[j-1]);
-						//*****************pthread_mutex_unlock(&mutexTab[j-1]);
+						pthread_mutex_lock(&mutexTab[j-1]);
+						do
+						{
+							returnSignal = pthread_cond_signal(&condTab[j-1]);
+						}while(returnSignal != 0);
+						pthread_mutex_unlock(&mutexTab[j-1]);
 						break;
 					}
 								
 					if((strcmp(tmpCard->workshopName,concatStringInt("Workshop", j))) == 0)
 					{
-						//*****************pthread_mutex_lock(&mutexTab[j]);
-						pthread_cond_signal(&condTab[j]);
-						//*****************pthread_mutex_unlock(&mutexTab[j]);
+						pthread_mutex_lock(&mutexTab[j]);
+						do
+						{
+							returnSignal = pthread_cond_signal(&condTab[j]);
+						}while(returnSignal != 0);
+						pthread_mutex_unlock(&mutexTab[j]);
 						break;
 					}
-					sleep(1);
 				}
 					
 				list_removeFirst(postmanListCard);
 				list_next(postmanListCard);
 			}
-			//*****************pthread_mutex_unlock(&mutexPostman_listcard);
+			pthread_mutex_unlock(&mutexPostman_listcard);
 			
 			// Wake up the LB for receiving all cards
-			pthread_cond_signal(&condPostmanWakeUp);		
+			do
+			{
+				returnSignal = pthread_cond_signal(&condPostmanWakeUp);
+			}while(returnSignal != 0);
 		}
 		else
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 			break;
 		}
 	}
@@ -153,20 +168,20 @@ void* Supplier_Step_thread_fct(void* arg)
 		
 	while(1)
 	{
-		//*****************pthread_mutex_lock(&mutexTab[0]);
+		pthread_mutex_lock(&mutexTab[0]);
 		
 		//reveil du workshop par le tableau de lancement
 		pthread_cond_wait(&condTab[0], &mutexTab[0]);
 		
 		// Protection by mutex because of nbProductsFinished multiple access 
-		//*****************pthread_mutex_lock(&stopMutex);
+		pthread_mutex_lock(&stopMutex);
 		
 		if(nbProductsFinished < nbProductsWanted)
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 		
 			printf("%s : Container's creation in progress...\n", supplier->name); 
-			sleep(8);
+			sleep(minusFabricationTime);
 			printf("%s : Container created !\n", supplier->name);
 		
 			//met la piece fabriquée dans un container destiné au poste en aval
@@ -183,11 +198,11 @@ void* Supplier_Step_thread_fct(void* arg)
 				supplier->containerToSend->nbPieces = 0;
 			}
 		
-			//*****************pthread_mutex_unlock(&mutexTab[0]);
+			pthread_mutex_unlock(&mutexTab[0]);
 		}
 		else
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 			break;
 		}
 	}
@@ -205,6 +220,7 @@ void* Supplier_Step_thread_fct(void* arg)
 
 void* Middle_Step_thread_fct(void* arg)
 {
+	int returnSignal;
 	Workshop *tmpWorkshop;
 	int* numberThread = (int*) arg;
 	Workshop *workshop = (Workshop*) malloc(sizeof(Workshop));
@@ -215,17 +231,17 @@ void* Middle_Step_thread_fct(void* arg)
 	
 	while(1)
 	{			
-		//*****************pthread_mutex_lock(&mutexTab[*numberThread]);
+		pthread_mutex_lock(&mutexTab[*numberThread]);
 		
 		//reveil du workshop par le tableau de lancement
 		pthread_cond_wait(&condTab[*numberThread], &mutexTab[*numberThread]);
 
 		// Protection by mutex because of nbProductsFinished multiple access 
-		//*****************pthread_mutex_lock(&stopMutex);
+		pthread_mutex_lock(&stopMutex);
 		
 		if(nbProductsFinished < nbProductsWanted)
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 
 			//prend un container du stock si actualcontainer = 0;	
 			if(workshop->actualUsedContainer.nbPieces == 0)
@@ -246,7 +262,7 @@ void* Middle_Step_thread_fct(void* arg)
 			}
 		
 			printf("%s : Container's creation in progress...\n", workshop->name); 
-			sleep(8);
+			sleep(minusFabricationTime);
 			printf("%s : Container created !\n", workshop->name);
 		
 			//met la piece fabriquée dans un container destiné au poste en aval		
@@ -259,21 +275,23 @@ void* Middle_Step_thread_fct(void* arg)
 				if((*numberThread+1) != (nbMiddleStep+1))
 					tmpWorkshop = (Workshop*) list_seekWorkshopName_voidstar(concatStringInt("Workshop",*numberThread+1), workshopList);
 				else
-				{
-					printf("aaaaaaaa\n");
-					//*****************pthread_mutex_lock(&mutexTab[nbMiddleStep+1]);
-					printf("bbbbbbbb\n");
-					pthread_cond_signal(&condTab[nbMiddleStep+1]);
-					printf("cccccccc\n");
-					//*****************pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
-					printf("dddddddd\n");
 					tmpWorkshop = (Workshop*) list_seekWorkshopName_voidstar("Final_product1", workshopList);
-				}
-					
+
 				tmpContainer = *workshop->containerToSend;
 				list_insert(tmpWorkshop->stock.listContainer, (void*) &tmpContainer);
+								
+				printf("%s : Container envoye \n", workshop->name);	
 				
-				printf("%s : Container envoye \n", workshop->name);			
+				if((*numberThread+1) == (nbMiddleStep+1))
+				{
+					pthread_mutex_lock(&mutexTab[nbMiddleStep+1]);
+					do
+					{
+						returnSignal = pthread_cond_signal(&condTab[nbMiddleStep+1]);
+					}while(returnSignal != 0);
+					pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
+				}
+						
 				workshop->containerToSend->nbPieces = 0;
 			}
 
@@ -281,11 +299,11 @@ void* Middle_Step_thread_fct(void* arg)
 			//if(workshop->actualUsedContainer.nbPieces == 0)
 				//list_insert(workshop->actualUsedContainer, workshopEnAmont->stock.listContainer);
 		
-			//*****************pthread_mutex_unlock(&mutexTab[*numberThread]);
+			pthread_mutex_unlock(&mutexTab[*numberThread]);
 		}
 		else
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 			break;
 		}
 	}
@@ -302,7 +320,7 @@ void* Middle_Step_thread_fct(void* arg)
 
 void* Final_Product_thread_fct(void* arg)
 {
-	int i;
+	int i, returnSignal;
 	int* numberThread = (int*) arg;
 	
 	Workshop *finalProduct = (Workshop*) malloc(sizeof(Workshop));
@@ -312,21 +330,25 @@ void* Final_Product_thread_fct(void* arg)
 	
 	while(1)
 	{
+		printf("111111\n");
 		// si le stock n'est pas vide ou si le conteneur en cours n'est pas fini ==> on créé une autre piece
-		//*****************pthread_mutex_lock(&mutexTab[nbMiddleStep+1]);
-		
+		pthread_mutex_lock(&mutexTab[nbMiddleStep+1]);
+		printf("222222\n");
 		//if((finalProduct->stock.nbContainer !=0) || (finalProduct->actualUsedContainer.nbPieces > 0))
 		//{
 		//prend un container du stock si actualcontainer = 0;	
 		if(finalProduct->actualUsedContainer.nbPieces == 0)
 		{	
 			if(nbProductsFinished > 0)
+			{
 				pthread_cond_wait(&condTab[nbMiddleStep+1], &mutexTab[nbMiddleStep+1]);
+				printf("toto\n");
+			}
 
 			finalProduct = takeNewContainerFromStock(finalProduct);
 			printf("%s : Nouveau container pris \n", finalProduct->name);
 		}
-		//*****************pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
+		pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
 		
 		// ici prendre une piece dans le container
 		finalProduct->actualUsedContainer.nbPieces--;
@@ -341,7 +363,7 @@ void* Final_Product_thread_fct(void* arg)
 
 		//fabrication de la piece
 		printf("%s : Piece's creation in progress...\n", finalProduct->name); 
-		sleep(4);
+		sleep(minusFabricationTime+1);
 		printf("%s : 1 Piece finished !\n", finalProduct->name);
 		
 		//Envoi du container vide au poste en amont !
@@ -349,19 +371,19 @@ void* Final_Product_thread_fct(void* arg)
 			//list_insert(finalProduct->actualUsedContainer, workshopEnAmont->stock.
 
 		// Protection by mutex because of nbProductsFinished multiple access 
-		//*****************pthread_mutex_lock(&stopMutex);
+		pthread_mutex_lock(&stopMutex);
 		nbProductsFinished ++;
 	
 		printf("Number of finished products : %d\n", nbProductsFinished);
 	
 		if(nbProductsFinished == nbProductsWanted)
 		{
-			//*****************pthread_mutex_unlock(&stopMutex);
+			pthread_mutex_unlock(&stopMutex);
 			break;
 		}
-		//*****************pthread_mutex_unlock(&stopMutex);
+		pthread_mutex_unlock(&stopMutex);
 		//}
-		//*****************//pthread_mutex_unlock(&mutexPostman_listcard);
+		//pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
 	}
 	printf("<=== sortie %d\n", nbMiddleStep+1);
 	printf("Shutdown the program, please wait ...\n");
@@ -371,8 +393,11 @@ void* Final_Product_thread_fct(void* arg)
 	// wake up all for the end of the program
 	for(i=0; i<nbCond+1; i++)
 	{
-		printf("toto\n");
-		pthread_cond_signal(&condTab[i]);
+		printf("Fin\n");
+		do
+		{
+			returnSignal = pthread_cond_signal(&condTab[i]);
+		}while(returnSignal != 0);
 	}
 	
 	// Frees and exit
