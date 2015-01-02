@@ -42,7 +42,6 @@ void applicateWhenSIGINT(int s)
 	freeargpointer(cardRefPiece);
 	freeargpointer(cardDesignationPiece);
 	freeargpointer(cardNameWorkshopSupplier);*/
-	
 	free(tabNumber);
 	
 	list_delete(&referenceListCard);
