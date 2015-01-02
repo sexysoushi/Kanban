@@ -1,7 +1,7 @@
 /* Application of the Kanban's method
  * 
  * Authors : Renaud Guillaume - Schiavi Barbara
- * Last modification : December 28, 2014
+ * Last modification : January 2, 2015
  */
 
 #include "Initialize.h"
@@ -14,6 +14,52 @@ void error(const char* msg) { perror(msg); exit(-1); }
 /* Function used as the mask of the signal SIGINT */
 void applicateWhenSIGINT(int s) 
 {	
+	Workshop *tmpWorkshop;
+	int i;
+	
+	if(nbProductsWanted > 0)
+	{
+		tmpWorkshop = (Workshop*) list_seekWorkshopName_voidstar("Supplier1", workshopList);
+		list_delete(&(tmpWorkshop->stock.listContainer));
+		list_delete(&(tmpWorkshop->bal.listCard));
+		free(tmpWorkshop);
+	
+		for(i=1; i<nbMiddleStep+1; i++)
+		{
+			tmpWorkshop = (Workshop*) list_seekWorkshopName_voidstar(concatStringInt("Workshop",i), workshopList);
+			list_delete(&(tmpWorkshop->stock.listContainer));
+			list_delete(&(tmpWorkshop->bal.listCard));
+			free(tmpWorkshop);			
+		}
+	
+		tmpWorkshop = (Workshop*) list_seekWorkshopName_voidstar("Final_product1", workshopList);	
+		list_delete(&(tmpWorkshop->stock.listContainer));
+		list_delete(&(tmpWorkshop->bal.listCard));
+		free(tmpWorkshop);
+	}
+	
+	/*freeargpointer(cardWorkshopName);
+	freeargpointer(cardRefPiece);
+	freeargpointer(cardDesignationPiece);
+	freeargpointer(cardNameWorkshopSupplier);*/
+	free(tabNumber);
+	
+	list_delete(&referenceListCard);
+	list_delete(&workshopList);
+	list_delete(&postmanListCard);
+	
+	pthread_mutex_destroy(&initCardRef);
+	pthread_mutex_destroy(&stopMutex);
+	pthread_mutex_destroy(&mutexPostman_listcard);
+	pthread_mutex_destroy(&mutexListWorkshop);
+	for(i=0; i<nbMutex; i++)
+		pthread_mutex_destroy(&mutexTab[i]);
+		
+	pthread_cond_destroy(&condPostmanWakeUp);
+	pthread_cond_destroy(&condLBWakeUp);
+	for(i=0; i<nbCond; i++)
+		pthread_cond_destroy(&condTab[i]);
+
 	error("\nProblem : received stop signal !\n"); 
 }
 
@@ -25,13 +71,11 @@ int main(int argc, char* argv[])
 	//if elemSize doesn't increase when nbMiddleStep increase, there are some problems when list_print_Card() is called 
 	int elemSize = nbMiddleStep;
 	int i;  
-	int *tabNumber;
 	int cardNumOrder[4] = {0, 1, 2, 3};
-	char **cardWorkshopName, **cardRefPiece, **cardDesignationPiece, **cardNameWorkshopSupplier;
 	char *elem_cardWorkshopName, *elem_cardRefPiece, *elem_cardDesignationPiece, *elem_cardNameWorkshopSupplier;
 	
 	/* Initializations */
-	cardWorkshopName = (char **) malloc(elemSize * sizeof(char *));
+	cardWorkshopName = malloc(elemSize * sizeof *cardWorkshopName);
 	cardRefPiece = (char **) malloc(elemSize * sizeof(char *));
 	cardDesignationPiece = (char **) malloc(elemSize * sizeof(char *));
 	cardNameWorkshopSupplier = (char **) malloc(elemSize * sizeof(char *));
@@ -97,6 +141,7 @@ int main(int argc, char* argv[])
 	list_print_Card(referenceListCard);
 	
 	workshopList = list_new();
+	nbProductsWanted = -1;
 	
 	/* Client's choice */
 	printf("How many products do you want ?\n");
@@ -119,23 +164,24 @@ int main(int argc, char* argv[])
 			{ error("Error Final_Step_thread creation\n"); exit(-1);}
 	}
 
-	pthread_join(t1,NULL);
 	pthread_join(t2,NULL);
+	pthread_join(t1,NULL);
 	pthread_join(t3,NULL);
 	pthread_join(t4,NULL);
 	
 	for(i=0; i<nbMiddleStep; i++)
-		pthread_join(threadTab[i],NULL); 
-		
+		pthread_join(threadTab[i],NULL);
+	
 	printf("\n all Join reached \n");
 	
 	list_delete(&referenceListCard);
 	list_delete(&workshopList);
-	
-	//free(cardWorkshopName);
-	//free(cardRefPiece);
-	//free(cardDesignationPiece);
-	//free(cardNameWorkshopSupplier);
+		
+	/*freeargpointer(cardWorkshopName);
+	freeargpointer(cardRefPiece);
+	freeargpointer(cardDesignationPiece);
+	freeargpointer(cardNameWorkshopSupplier);
+	*/
 	free(tabNumber);
 	
 	pthread_mutex_destroy(&initCardRef);
@@ -154,28 +200,3 @@ int main(int argc, char* argv[])
 }
 
 
-
-/*for(i=0; i<nbSem; i++)
-	{
-		//Semaphore's name 
-		sprintf(txt, "sem");
-		sprintf(nbName, "%d", i);
-		semName = strcat(txt, nbName);
-		semTab[i] = sem_open(semName, O_RDWR | O_CREAT, 0666, 0);
-	}*/
-	
-	
-	
-	
-	
-		/*Delete semaphores 
-	for(i=0; i<nbSem; i++)
-	{
-		// Semaphore's name 
-		sprintf(txt, "sem");
-		sprintf(nbName, "%d", i);
-		semName = strcat(txt, nbName);
-		sem_unlink(semName);
-	}*/
-
-	//free(txt); /* Free the memory allocated to txt with malloc */

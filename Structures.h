@@ -16,7 +16,7 @@
 #include "List.h"
 
 
-#define nbMiddleStep 10		// at least 1
+#define nbMiddleStep 4	// at least 1
 #define nbDiffentCard nbMiddleStep+1
 #define nbMutex nbMiddleStep+2
 #define nbCond nbMiddleStep+2
@@ -37,11 +37,15 @@ pthread_mutex_t mutexTab[nbMutex];
 pthread_cond_t condTab[nbCond];	
 pthread_cond_t condPostmanWakeUp, condLBWakeUp;
 
-int nbProductsWanted;	// Client's asking
-int nbProductsFinished;	//Client's pieces finish
+// Declaration in global so we can free them when SIGINT signal is received
+int *tabNumber;
+char **cardWorkshopName, **cardRefPiece, **cardDesignationPiece, **cardNameWorkshopSupplier;
 list* postmanListCard;	
 list* referenceListCard;
 list* workshopList;
+
+int nbProductsWanted;	// Client's asking
+int nbProductsFinished;	//Client's pieces finish
 
 
 typedef struct {
