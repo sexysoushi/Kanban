@@ -175,26 +175,10 @@ Workshop* initWorkshop(Workshop* ws, char* s, int number, int boolMiddleStep)
 	
 	ws->containerToSend = initContainer(&ws->refCard);
 	ws->containerToSend->nbPieces = 0;
-	/* Put the good refCard in the stock's containers
-	tmpCard = (Card*) list_seekCardDesignation_voidstar(tmpChar, referenceListCard);
-	stockCard = *tmpCard;
-	
-	// Assignement workshop refCard 
-	tmpCard = (Card*) list_seekCardName_voidstar(ws->name ,referenceListCard);
-	ws->refCard = *tmpCard;
-	*/
 	
 	pthread_mutex_unlock(&initCardRef);
 		
 	return ws;
 }
 
-/*
-LB initLB()
-{
-	LB lb;
-	lb.listCard = list_new();
-	return lb;
-}
-*/
 

@@ -16,25 +16,20 @@
 #include "List.h"
 
 
-#define nbMiddleStep 4	// at least 1
-#define nbDiffentCard nbMiddleStep+1
-#define nbMutex nbMiddleStep+2
-#define nbCond nbMiddleStep+2
 #define nbPieceByContainer 2
 #define nbContainerByStock 2
-
 #define minusFabricationTime 4
 
 /* Global variables */
 pthread_t t1, t2, t3, t4;	// 4 indispensable threads 
-pthread_t threadTab[nbMiddleStep]; 	// Threads for dynamic number of workshop
+pthread_t *threadTab; 	// Threads for dynamic number of workshop
 
 pthread_mutex_t initCardRef, mutexListWorkshop;
-pthread_mutex_t stopMutex;
+pthread_mutex_t stopMutex, mutexThreadCreated;
 pthread_mutex_t mutexPostman_listcard;
-pthread_mutex_t mutexTab[nbMutex];	
+pthread_mutex_t *mutexTab;	
 
-pthread_cond_t condTab[nbCond];	
+pthread_cond_t *condTab;	
 pthread_cond_t condPostmanWakeUp, condLBWakeUp;
 
 // Declaration in global so we can free them when SIGINT signal is received
@@ -44,6 +39,10 @@ list* postmanListCard;
 list* referenceListCard;
 list* workshopList;
 
+int nbDiffentCard, nbMutex, nbCond;
+
+int nbThreadCreated;
+int nbMiddleStep;
 int nbProductsWanted;	// Client's asking
 int nbProductsFinished;	//Client's pieces finish
 
@@ -64,8 +63,6 @@ typedef struct {
 } Container;
 
 
-//un stock est situé à proximité de chaque poste
-//un stock est constitué de plusieurs conteneur
 typedef struct {
 	int nbContainer;
 	list *listContainer;
@@ -85,11 +82,6 @@ typedef struct {
 	char* name;
 } Workshop;
 
-/*
-typedef struct {
-	list *listCard;
-}LB; //Launching Board
-*/
 
 /*Functions implemented at the beginning of the main file */
 void applicateWhenSIGINT(int);

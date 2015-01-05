@@ -11,14 +11,22 @@ Un homme flux récupère régulièrement les cartes aux différents postes de mo
 void* Postman_thread_fct(void* arg)
 {
 	int returnSignal;
-	int i;
+	int i, initOk = 0;
 	postmanListCard = list_new();
 	Workshop* tmpWorkshop;
 	list* tmpListCard;
 	Card* tmpCard;
 	
 	// wait initialisations ends
-	sleep(nbMiddleStep);
+	while(initOk == 0)
+	{
+		pthread_mutex_lock(&mutexThreadCreated);
+		if(nbThreadCreated >= nbMiddleStep)
+			initOk = 1;
+		pthread_mutex_unlock(&mutexThreadCreated);
+	}
+
+	sleep(1);
 	
 	while(1)
 	{		  
@@ -26,6 +34,8 @@ void* Postman_thread_fct(void* arg)
 		pthread_mutex_lock(&mutexListWorkshop); 
 		
 		list_first(workshopList);
+		
+		pthread_mutex_lock(&mutexPostman_listcard); 
 		for(i=0; i<workshopList->nbElem; i++)
 		{
 			tmpWorkshop = (Workshop*) list_data(workshopList);
@@ -38,11 +48,9 @@ void* Postman_thread_fct(void* arg)
 				while(tmpListCard->nbElem > 0)
 				{
 					tmpCard = (Card*) list_data(tmpListCard);
-					
-					pthread_mutex_lock(&mutexPostman_listcard); 
 					list_insert(postmanListCard, tmpCard);
 											 
-					printf("\t\t\t\t\t\tPostMan : Envoi to LB Card -> %s\n", tmpCard->workshopName);
+					printf("\t\t\t\t\t\tPostMan : Send card -> %s to LB\n", tmpCard->workshopName);
 					list_removeFirst(tmpListCard);
 				}
 			}
@@ -55,14 +63,14 @@ void* Postman_thread_fct(void* arg)
 			// Wake up the LB for cards transmission
 			do
 			{
-				printf("\t\t\t\t\t\tPostMan : Envoi signal a LB\n");
+				printf("\t\t\t\t\t\tPostMan : Send signal to LB\n");
 				returnSignal = pthread_cond_signal(&condLBWakeUp);
 			}while(returnSignal != 0);
 		
-			printf("\t\t\t\t\t\tPostMan : Attente reveil par LB\n");
+			printf("\t\t\t\t\t\tPostMan : Wait for LB wake up signal\n");
 			// Wait for LB signal
 			pthread_cond_wait(&condPostmanWakeUp, &mutexPostman_listcard);
-			printf("\t\t\t\t\t\tPostMan : Reveil par LB effectue\n");
+			printf("\t\t\t\t\t\tPostMan : LB wake up signal received\n");
 		}
 		else
 			sleep(1);
@@ -84,7 +92,7 @@ void* Postman_thread_fct(void* arg)
 		
 		pthread_mutex_unlock(&stopMutex);
 	}
-	printf("<=== sortie Postman\n");
+	printf("<=== end Postman\n");
 	
 	pthread_cond_signal(&condLBWakeUp);
 	
@@ -103,17 +111,15 @@ void* Launching_board_thread_fct(void* arg)
 	Card *tmpCard;
 	char* tmpChar;
 	
-	// Wait for initialisations of all the workshops
-	sleep(3);
-	
+
 	while(1)
 	{
 		pthread_mutex_lock(&mutexPostman_listcard); 	
 
-		printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Attente reveil par Postman\n");
+		printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Wait for Postman wake up signal\n");
 		// Wait for Postman signal
 		pthread_cond_wait(&condLBWakeUp, &mutexPostman_listcard);
-		printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Reveil par Postman effectue\n");
+		printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Postman wake up signal received\n");
 		
 		// Protection by mutex because of nbProductsFinished multiple access 
 		pthread_mutex_lock(&stopMutex);
@@ -124,13 +130,13 @@ void* Launching_board_thread_fct(void* arg)
 	
 			if(postmanListCard->nbElem > 0)
 			{	
-				printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : nb card à traiter -> %d\n", postmanListCard->nbElem);
-				list_first(postmanListCard);
+				printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : nb card to take care of -> %d\n", postmanListCard->nbElem);
 	
 				for(i=0; i<postmanListCard->nbElem; i++)
 				{
+					list_first(postmanListCard);
 					tmpCard = (Card*) list_data(postmanListCard);
-					printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Reception Card pour %s\n", tmpCard->workshopName);
+					printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Card for %s received\n", tmpCard->workshopName);
 		
 					for(j=1; j<(nbMiddleStep+1); j++)
 					{	
@@ -142,7 +148,7 @@ void* Launching_board_thread_fct(void* arg)
 							{
 								returnSignal = pthread_cond_signal(&condTab[j-1]);
 							}while(returnSignal != 0);
-							printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Envoi signal à %s\n", tmpCard->workshopName);
+							printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Send signal to %s\n", tmpCard->workshopName);
 							pthread_mutex_unlock(&mutexTab[j-1]);
 							break;
 						}
@@ -154,20 +160,20 @@ void* Launching_board_thread_fct(void* arg)
 							{
 								returnSignal = pthread_cond_signal(&condTab[j]);
 							}while(returnSignal != 0);
-							printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Envoi signal à %s\n", tmpCard->workshopName);
+							printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Send signal to %s\n", tmpCard->workshopName);
 							pthread_mutex_unlock(&mutexTab[j]);
 							break;
 						}
 					}
 				
 					list_removeFirst(postmanListCard);
-					list_next(postmanListCard);
+					//list_next(postmanListCard);
 				}
 			}
 			// Wake up the LB for receiving all cards
 			do
 			{
-				printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : envoi signal a PostMan\n");
+				printf("\t\t\t\t\t\t\t\t\t\t\t\tLB : Send signal to PostMan\n");
 				returnSignal = pthread_cond_signal(&condPostmanWakeUp);
 			}while(returnSignal != 0);
 			
@@ -230,7 +236,7 @@ void* Supplier_Step_thread_fct(void* arg)
 				tmpContainer = *supplier->containerToSend;
 				list_insert(tmpWorkshop->stock.listContainer, (void*) &tmpContainer);
 				tmpWorkshop->stock.nbContainer ++;
-				printf("%s : Container envoye !\n", supplier->name);	
+				//printf("%s : Container sent !\n", supplier->name);	
 				
 				test = list_seekWorkshopName_voidstar("Workshop1", workshopList);
 					
@@ -268,6 +274,10 @@ void* Middle_Step_thread_fct(void* arg)
 	workshop = initWorkshop(workshop, "Workshop", *numberThread, 0);	
 	list_insert(workshopList, workshop);
 	
+	pthread_mutex_lock(&mutexThreadCreated);
+	nbThreadCreated ++;
+	pthread_mutex_unlock(&mutexThreadCreated);
+	
 	while(1)
 	{			
 		pthread_mutex_lock(&mutexTab[*numberThread]);
@@ -286,7 +296,7 @@ void* Middle_Step_thread_fct(void* arg)
 			if(workshop->actualUsedContainer.nbPieces == 0)
 			{	
 				workshop = takeNewContainerFromStock(workshop);
-				printf("%s : Nouveau container pris \n", workshop->name);
+				printf("%s : New container taken \n", workshop->name);
 			}
 			
 			// Use pieces inside the container
@@ -297,12 +307,11 @@ void* Middle_Step_thread_fct(void* arg)
 			{
 				// Put magnetic Card in the mailBox
 				list_insert(workshop->bal.listCard, (void*) workshop->actualUsedContainer.magneticCard);
-				printf("%s : Carte dans BAL \n", workshop->name);
+				printf("%s : Card in BAL \n", workshop->name);
 			}
 		
 			printf("%s : Container's creation in progress...\n", workshop->name); 
 			sleep(minusFabricationTime);
-			printf("%s : Container created !\n", workshop->name);
 		
 			// Put the new piece in the container which will be sent to the next workshop		
 			workshop->containerToSend->nbPieces += nbPieceByContainer;
@@ -320,7 +329,7 @@ void* Middle_Step_thread_fct(void* arg)
 				tmpContainer = *workshop->containerToSend;
 				list_insert(tmpWorkshop->stock.listContainer, (void*) &tmpContainer);
 				tmpWorkshop->stock.nbContainer ++;		
-				printf("%s : Container envoye \n", workshop->name);	
+				//printf("%s : Container sent \n", workshop->name);	
 										
 				workshop->containerToSend->nbPieces = 0;
 			}	
@@ -364,7 +373,7 @@ void* Final_Product_thread_fct(void* arg)
 			if(finalProduct->actualUsedContainer.nbPieces == 0)
 			{	
 				finalProduct = takeNewContainerFromStock(finalProduct);
-				printf("%s : Nouveau container pris \n", finalProduct->name);
+				printf("%s : New container taken \n", finalProduct->name);
 			}
 			pthread_mutex_unlock(&mutexTab[nbMiddleStep+1]);
 		
@@ -376,7 +385,7 @@ void* Final_Product_thread_fct(void* arg)
 			{
 				// Mettre carte dans la boite aux lettres 
 				list_insert(finalProduct->bal.listCard, (void*) finalProduct->actualUsedContainer.magneticCard);
-				printf("%s : Carte dans BAL \n", finalProduct->name);
+				printf("%s : Card in BAL \n", finalProduct->name);
 			}
 
 			//fabrication de la piece
@@ -414,6 +423,9 @@ void* Final_Product_thread_fct(void* arg)
 			returnSignal = pthread_cond_signal(&condTab[i]);
 		}while(returnSignal != 0);
 	}
+	
+	pthread_cond_signal(&condLBWakeUp);
+	pthread_cond_signal(&condPostmanWakeUp);
 	
 	// Frees and exit
 	list_delete(&(finalProduct->stock.listContainer));
