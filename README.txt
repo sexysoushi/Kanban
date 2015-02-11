@@ -1,7 +1,9 @@
 Kanban
 ======
 
-Mettre en place méthode Kanban avec des threads et une synchronisation sur réveil selon différentes conditions
+Mettre en place la méthode Kanban avec des threads et une synchronisation sur réveil selon différentes conditions
+
+Set up the Kaban's method by using threads and synchronization on awakening according to the conditions
 
 ======
 
