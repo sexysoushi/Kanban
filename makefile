@@ -1,12 +1,13 @@
 CC = gcc
-CFLAGS = -W -Werror -g
+CFLAGS = -W -g
 LIBS = -lpthread
 EXEC = main
 
 all: $(EXEC)
 
-main : main.o Workshop.o Initialize.o List.o Other.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+main : main.o Workshop.o Initialize.o List.o Other.o Structures.h
+	$(CC) $(CFLAGS) $^ $(LIBS)
 
 main.o : main.c List.h
 	$(CC) $(CFLAGS) -c $<

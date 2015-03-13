@@ -12,7 +12,7 @@
 void error(const char* msg) { perror(msg); exit(-1); }
 
 /* Function used as the mask of the signal SIGINT */
-void applicateWhenSIGINT(int s) 
+void applicateWhenSIGINT() 
 {	
 	Workshop *tmpWorkshop;
 	int i;
@@ -64,7 +64,7 @@ void applicateWhenSIGINT(int s)
 }
 
 
-int main(int argc, char* argv[])
+int main()
 {
 	nbProductsFinished = 0;
 	nbThreadCreated = 0;

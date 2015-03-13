@@ -8,7 +8,7 @@
 /*
 Un homme flux récupère régulièrement les cartes aux différents postes de montage et les apporte à l’atelier en amont.
 */
-void* Postman_thread_fct(void* arg)
+void* Postman_thread_fct()
 {
 	int returnSignal;
 	int i, initOk = 0;
@@ -104,7 +104,7 @@ void* Postman_thread_fct(void* arg)
 /*
 Tableau de lancement reveil poste en amont afin qu'il refournisse en pieces la carte magnetique détient la référence
 */
-void* Launching_board_thread_fct(void* arg)
+void* Launching_board_thread_fct()
 {
 	int returnSignal;
 	int i,j;
@@ -189,11 +189,15 @@ void* Launching_board_thread_fct(void* arg)
 			break;
 		}
 	}
+<<<<<<< Updated upstream
 	printf("<=== sortie Launching_board\n");
 
 	pthread_cond_signal(&condPostmanWakeUp);
 	
 	// Frees and exit
+=======
+	*/
+>>>>>>> Stashed changes
 	pthread_exit(NULL);
 }
 

@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Structures.h"
-
+#include "Other.h"
 
 list *list_new (void)
 {

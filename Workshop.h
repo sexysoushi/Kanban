@@ -8,6 +8,7 @@
 
 #include "Structures.h"
 #include "Initialize.h"
+#include "Other.h"
 
 //Tableau de lancement
 void* Launching_board_thread_fct(void* arg);
